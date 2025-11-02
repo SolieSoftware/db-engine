@@ -1,0 +1,5 @@
+# ninja log v7
+6	2039	7837798443475867	CMakeFiles/test_disk_manager.dir/src/test_disk_manager.cpp.obj	2c47f2c15d4ae65a
+1	2058	7837798443426602	CMakeFiles/storage.dir/src/storage/disk_manager.cpp.obj	6554c7c125b8b932
+2058	2329	7837798463989640	libstorage.a	5be8270e20c65a97
+2329	2529	7837798466700795	test_disk_manager.exe	9d2927f18efbac9f

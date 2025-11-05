@@ -17,10 +17,12 @@ endif()
 
 # Include directories
 include_directories(${PROJECT_SOURCE_DIR}/src/include)
+include_directories(${PROJECT_SOURCE_DIR}/src/storage)
 
 # Storage library (disk_manager and future storage classes)
 add_library(storage
     src/storage/disk_manager.cpp
+    src/storage/page/page.cpp
 )
 
 # Test executable
@@ -30,6 +32,12 @@ add_executable(test_disk_manager
 
 # Link the storage library to the test executable
 target_link_libraries(test_disk_manager storage)
+
+# Page test
+add_executable(test_page
+    src/test_page.cpp
+)
+target_link_libraries(test_page storage)
 
 # Optional: Main executable (when you create it later)
 # add_executable(db_engine, src/main.cpp)

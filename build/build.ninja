@@ -47,9 +47,16 @@ build cmake_object_order_depends_target_storage: phony || .
 build CMakeFiles/storage.dir/src/storage/disk_manager.cpp.obj: CXX_COMPILER__storage_unscanned_ C$:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage/disk_manager.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles\storage.dir\src\storage\disk_manager.cpp.obj.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/include
+  INCLUDES = -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/include -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage
   OBJECT_DIR = CMakeFiles\storage.dir
   OBJECT_FILE_DIR = CMakeFiles\storage.dir\src\storage
+
+build CMakeFiles/storage.dir/src/storage/page/page.cpp.obj: CXX_COMPILER__storage_unscanned_ C$:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage/page/page.cpp || cmake_object_order_depends_target_storage
+  DEP_FILE = CMakeFiles\storage.dir\src\storage\page\page.cpp.obj.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/include -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage
+  OBJECT_DIR = CMakeFiles\storage.dir
+  OBJECT_FILE_DIR = CMakeFiles\storage.dir\src\storage\page
 
 
 # =============================================================================
@@ -59,7 +66,7 @@ build CMakeFiles/storage.dir/src/storage/disk_manager.cpp.obj: CXX_COMPILER__sto
 #############################################
 # Link the static library libstorage.a
 
-build libstorage.a: CXX_STATIC_LIBRARY_LINKER__storage_ CMakeFiles/storage.dir/src/storage/disk_manager.cpp.obj
+build libstorage.a: CXX_STATIC_LIBRARY_LINKER__storage_ CMakeFiles/storage.dir/src/storage/disk_manager.cpp.obj CMakeFiles/storage.dir/src/storage/page/page.cpp.obj
   OBJECT_DIR = CMakeFiles\storage.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
@@ -78,7 +85,7 @@ build cmake_object_order_depends_target_test_disk_manager: phony || cmake_object
 build CMakeFiles/test_disk_manager.dir/src/test_disk_manager.cpp.obj: CXX_COMPILER__test_disk_manager_unscanned_ C$:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/test_disk_manager.cpp || cmake_object_order_depends_target_test_disk_manager
   DEP_FILE = CMakeFiles\test_disk_manager.dir\src\test_disk_manager.cpp.obj.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/include
+  INCLUDES = -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/include -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage
   OBJECT_DIR = CMakeFiles\test_disk_manager.dir
   OBJECT_FILE_DIR = CMakeFiles\test_disk_manager.dir\src
 
@@ -98,6 +105,39 @@ build test_disk_manager.exe: CXX_EXECUTABLE_LINKER__test_disk_manager_ CMakeFile
   TARGET_FILE = test_disk_manager.exe
   TARGET_IMPLIB = libtest_disk_manager.dll.a
   TARGET_PDB = test_disk_manager.exe.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_page
+
+
+#############################################
+# Order-only phony target for test_page
+
+build cmake_object_order_depends_target_test_page: phony || cmake_object_order_depends_target_storage
+
+build CMakeFiles/test_page.dir/src/test_page.cpp.obj: CXX_COMPILER__test_page_unscanned_ C$:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/test_page.cpp || cmake_object_order_depends_target_test_page
+  DEP_FILE = CMakeFiles\test_page.dir\src\test_page.cpp.obj.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/include -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage
+  OBJECT_DIR = CMakeFiles\test_page.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_page.dir\src
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_page
+
+
+#############################################
+# Link the executable test_page.exe
+
+build test_page.exe: CXX_EXECUTABLE_LINKER__test_page_ CMakeFiles/test_page.dir/src/test_page.cpp.obj | libstorage.a || libstorage.a
+  LINK_LIBRARIES = libstorage.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\test_page.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = test_page.exe
+  TARGET_IMPLIB = libtest_page.dll.a
+  TARGET_PDB = test_page.exe.dbg
 
 
 #############################################
@@ -129,6 +169,8 @@ build storage: phony libstorage.a
 
 build test_disk_manager: phony test_disk_manager.exe
 
+build test_page: phony test_page.exe
+
 # =============================================================================
 # Folder targets.
 
@@ -137,7 +179,7 @@ build test_disk_manager: phony test_disk_manager.exe
 #############################################
 # Folder: C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build
 
-build all: phony libstorage.a test_disk_manager.exe
+build all: phony libstorage.a test_disk_manager.exe test_page.exe
 
 # =============================================================================
 # Built-in targets

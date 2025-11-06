@@ -46,7 +46,7 @@ namespace dbengine {
         * @param data output buffer to write record data
         * @return true if the record exists, false if deleted or invalid
          */
-         bool GetRecord(const RID &rid, char *data) const;
+         bool GetRecord(const RID &rid, char *data);
 
          /**
          * Delete a record from the page.

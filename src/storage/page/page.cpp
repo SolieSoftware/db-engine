@@ -59,12 +59,6 @@ namespace dbengine {
 
             uint32_t space_needed = size;
 
-            // Check if there's engouh free space
-            // Free space is between slot array (growing down) and records (growing up from bottom)
-
-            uint32_t free_space_Start = sizeof(PageHeader) + (header->num_slots * sizeof(Slot));
-            uint32_t free_space_end = header->free_space_pointer;
-
             // Need space for nes slot AND the record
             if (header->free_space_pointer + space_needed > PAGE_SIZE - (slot_array_end - sizeof(PageHeader))) {
                 return false; // Not enough space
@@ -75,7 +69,7 @@ namespace dbengine {
             for (uint32_t i = 0; i < header->num_slots; i++) {
                 Slot *slot = GetSlot(i);
                 if (slot->size == 0) { // Deleted slot, reuse it
-                    slot_num = i;
+                    slot_num = static_cast<uint32_t>(i);
                     break;
                 }
             }

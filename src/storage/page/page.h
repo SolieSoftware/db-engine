@@ -11,6 +11,7 @@ namespace dbengine {
     struct Slot {
         uint32_t offset;
         uint32_t size;
+        uint32_t generation;
     };
 
 
@@ -105,7 +106,7 @@ namespace dbengine {
             return GetSlotArray() + slot_num;
            }
 
-           const Slot *GetSlot(int32_t slot_num) const {
+           const Slot *GetSlot(uint32_t slot_num) const {
             return GetSlotArray() + slot_num;
            }
 

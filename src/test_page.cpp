@@ -4,7 +4,7 @@
 
 using namespace dbengine;
 
-void PrintTestHeader(const std:string &test_name) {
+void PrintTestHeader(const std::string &test_name) {
     std::cout << "=== " << test_name << " ===" << std::endl;
 }
 
@@ -200,7 +200,7 @@ int main() {
                     std::cout << "✓ Large record verified correctly" << std::endl;
                 } else {
                     std::cout << "✗ Large record data corrupted!" << std::endl;
-                    return 1
+                    return 1;
                 }
             }
         } else {

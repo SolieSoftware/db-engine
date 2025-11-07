@@ -60,16 +60,17 @@ namespace dbengine {
             uint32_t space_needed = size;
 
             // Need space for nes slot AND the record
-            if (header->free_space_pointer + space_needed > PAGE_SIZE - (slot_array_end - sizeof(PageHeader))) {
+            if (header->free_space_pointer - space_needed < slot_array_end) {
                 return false; // Not enough space
             }
 
             // Find an empty slot (deleted record) to reuse, or create a new one
-            uint32_t slot_num = -1;
+            int32_t slot_num = -1;
             for (uint32_t i = 0; i < header->num_slots; i++) {
                 Slot *slot = GetSlot(i);
                 if (slot->size == 0) { // Deleted slot, reuse it
-                    slot_num = static_cast<uint32_t>(i);
+                    slot_num = static_cast<int32_t>(i);
+                    slot->generation++;
                     break;
                 }
             }
@@ -96,7 +97,7 @@ namespace dbengine {
             header->free_space_pointer = record_offset; // Move free space pointer backwards
 
             // Set the output RID
-            rid = RID(header->page_id, slot_num);
+            rid = RID(header->page_id, slot_num, slot->generation);
 
             return true;
       }
@@ -104,7 +105,7 @@ namespace dbengine {
       /*
       * Get a record from the page
       */
-      bool Page::GetRecord(const RID &rid, char *date) {
+      bool Page::GetRecord(const RID &rid, char *data) {
         const PageHeader *header = GetHeader();
 
         // Validate slot number
@@ -115,6 +116,11 @@ namespace dbengine {
 
         // Get the slot
         const Slot *slot = GetSlot(slot_num);
+
+        // Check if slot generation number matches the RID's generation number
+        if (slot->generation != rid.GetGeneration()) {
+            return false; // Generation number mismatch
+        }
 
         // Check if record is deleted
         if (slot->size == 0) {
@@ -141,6 +147,11 @@ namespace dbengine {
 
         // Get the slot
         Slot *slot = GetSlot(slot_num);
+
+        // Check if slot generation number matches the RID's generation number
+        if (slot->generation != rid.GetGeneration()) {
+            return false; // Generation number mismatch
+        }
 
         if (slot->size == 0) {
             return false; // Already deleted
@@ -172,6 +183,11 @@ namespace dbengine {
         // Get the slot
         Slot *slot = GetSlot(slot_num);
 
+        // Check if slot generation number matches the RID's generation number
+        if (slot->generation != rid.GetGeneration()) {
+            return false; // Generation number mismatch
+        }
+
         if (slot->size == 0) {
             return false; // Record was deleted
         }
@@ -189,7 +205,7 @@ namespace dbengine {
         // A real implementation would do compaction
         DeleteRecord(rid);
         RID new_rid;
-        if (InsertRecrd(data, size, new_rid)) {
+        if (InsertRecord(data, size, new_rid)) {
             // Copy the new RID's slot to the old slot position to maintain RID
             Slot *new_slot = GetSlot(new_rid.GetSlotNum());
             slot->offset = new_slot->offset;

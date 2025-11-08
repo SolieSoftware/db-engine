@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <cstring>
-#include "config.h"
+#include "common/config.h"
 #include "common/rid.h"
 
 

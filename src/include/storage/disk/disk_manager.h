@@ -2,7 +2,7 @@
 
 #include <string>
 #include <fstream>
-#include "config.h"
+#include "common/config.h"
 
 namespace dbengine {
     

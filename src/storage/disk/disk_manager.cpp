@@ -75,4 +75,10 @@ void DiskManager::WritePage(page_id_t page_id, const char *page_data) {
  page_id_t DiskManager::AllocatePage() {
     return num_pages_++;
  }
+
+ void DiskManager::DeallocatePage(page_id_t page_id) {
+    // Simple implementation: do nothing
+    (void) page_id; // Suppres unused parameter warning
+    
+ }
 }

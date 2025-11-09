@@ -2,5 +2,6 @@ C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build/CMakeFiles/stor
 C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build/CMakeFiles/test_disk_manager.dir
 C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build/CMakeFiles/test_page.dir
 C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build/CMakeFiles/test_lru_replacer.dir
+C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build/CMakeFiles/test_buffer_pool_manager.dir
 C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build/CMakeFiles/edit_cache.dir
 C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build/CMakeFiles/rebuild_cache.dir

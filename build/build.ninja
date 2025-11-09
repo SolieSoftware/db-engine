@@ -65,6 +65,13 @@ build CMakeFiles/storage.dir/src/storage/buffer/lru_replacer.cpp.obj: CXX_COMPIL
   OBJECT_DIR = CMakeFiles\storage.dir
   OBJECT_FILE_DIR = CMakeFiles\storage.dir\src\storage\buffer
 
+build CMakeFiles/storage.dir/src/storage/buffer/buffer_pool_manager.cpp.obj: CXX_COMPILER__storage_unscanned_ C$:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage/buffer/buffer_pool_manager.cpp || cmake_object_order_depends_target_storage
+  DEP_FILE = CMakeFiles\storage.dir\src\storage\buffer\buffer_pool_manager.cpp.obj.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/include -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage
+  OBJECT_DIR = CMakeFiles\storage.dir
+  OBJECT_FILE_DIR = CMakeFiles\storage.dir\src\storage\buffer
+
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target storage
@@ -73,7 +80,7 @@ build CMakeFiles/storage.dir/src/storage/buffer/lru_replacer.cpp.obj: CXX_COMPIL
 #############################################
 # Link the static library libstorage.a
 
-build libstorage.a: CXX_STATIC_LIBRARY_LINKER__storage_ CMakeFiles/storage.dir/src/storage/disk/disk_manager.cpp.obj CMakeFiles/storage.dir/src/storage/page/page.cpp.obj CMakeFiles/storage.dir/src/storage/buffer/lru_replacer.cpp.obj
+build libstorage.a: CXX_STATIC_LIBRARY_LINKER__storage_ CMakeFiles/storage.dir/src/storage/disk/disk_manager.cpp.obj CMakeFiles/storage.dir/src/storage/page/page.cpp.obj CMakeFiles/storage.dir/src/storage/buffer/lru_replacer.cpp.obj CMakeFiles/storage.dir/src/storage/buffer/buffer_pool_manager.cpp.obj
   OBJECT_DIR = CMakeFiles\storage.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
@@ -179,6 +186,39 @@ build test_lru_replacer.exe: CXX_EXECUTABLE_LINKER__test_lru_replacer_ CMakeFile
   TARGET_IMPLIB = libtest_lru_replacer.dll.a
   TARGET_PDB = test_lru_replacer.exe.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target test_buffer_pool_manager
+
+
+#############################################
+# Order-only phony target for test_buffer_pool_manager
+
+build cmake_object_order_depends_target_test_buffer_pool_manager: phony || cmake_object_order_depends_target_storage
+
+build CMakeFiles/test_buffer_pool_manager.dir/tests/test_buffer_pool_manager.cpp.obj: CXX_COMPILER__test_buffer_pool_manager_unscanned_ C$:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/tests/test_buffer_pool_manager.cpp || cmake_object_order_depends_target_test_buffer_pool_manager
+  DEP_FILE = CMakeFiles\test_buffer_pool_manager.dir\tests\test_buffer_pool_manager.cpp.obj.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/include -IC:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/src/storage
+  OBJECT_DIR = CMakeFiles\test_buffer_pool_manager.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_buffer_pool_manager.dir\tests
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_buffer_pool_manager
+
+
+#############################################
+# Link the executable test_buffer_pool_manager.exe
+
+build test_buffer_pool_manager.exe: CXX_EXECUTABLE_LINKER__test_buffer_pool_manager_ CMakeFiles/test_buffer_pool_manager.dir/tests/test_buffer_pool_manager.cpp.obj | libstorage.a || libstorage.a
+  LINK_LIBRARIES = libstorage.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\test_buffer_pool_manager.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = test_buffer_pool_manager.exe
+  TARGET_IMPLIB = libtest_buffer_pool_manager.dll.a
+  TARGET_PDB = test_buffer_pool_manager.exe.dbg
+
 
 #############################################
 # Utility command for edit_cache
@@ -207,6 +247,8 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 build storage: phony libstorage.a
 
+build test_buffer_pool_manager: phony test_buffer_pool_manager.exe
+
 build test_disk_manager: phony test_disk_manager.exe
 
 build test_lru_replacer: phony test_lru_replacer.exe
@@ -221,7 +263,7 @@ build test_page: phony test_page.exe
 #############################################
 # Folder: C:/Users/SolomanShortland/Temp/Personal_Projects/db-engine/build
 
-build all: phony libstorage.a test_disk_manager.exe test_page.exe test_lru_replacer.exe
+build all: phony libstorage.a test_disk_manager.exe test_page.exe test_lru_replacer.exe test_buffer_pool_manager.exe
 
 # =============================================================================
 # Built-in targets

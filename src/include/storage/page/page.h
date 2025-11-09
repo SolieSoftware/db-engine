@@ -24,6 +24,8 @@ namespace dbengine {
 
 
     class Page {
+        friend class BufferPoolManager; // Allow BufferPoolManager to access private members
+
         public:
         /**
         * Initialize an empty page 

@@ -27,9 +27,6 @@ using namespace dbengine;
       assert(page2 != nullptr);
       assert(page3 != nullptr);
 
-      std::cout << "page_id1: " << page_id1 << std::endl;
-      std::cout << "page_id2: " << page_id2 << std::endl;
-      std::cout << "page_id3: " << page_id3 << std::endl;
       assert(page_id1 == 0);
       assert(page_id2 == 1);
       assert(page_id3 == 2);
@@ -46,7 +43,7 @@ using namespace dbengine;
 
   void TestFetchPage() {
       PrintTestHeader("Test 2: Fetch Page");
-      
+
       std::remove("test_bp.db");
       DiskManager disk_manager("test_bp.db");
       BufferPoolManager bpm(3, &disk_manager);

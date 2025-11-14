@@ -207,7 +207,7 @@ bool BufferPoolManager::DeletePage(page_id_t page_id) {
     // Step 1: Check if page is in buffer pool
     auto it = page_table_.find(page_id);
 
-    if (it == page_table_.end()) {
+    if (it != page_table_.end()) {
         // Page is in buffer pool
         frame_id_t frame_id = it->second;
 

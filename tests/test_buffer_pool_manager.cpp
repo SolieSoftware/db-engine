@@ -13,7 +13,7 @@ using namespace dbengine;
 
   void TestNewPage() {
       PrintTestHeader("Test 1: New Page");
-
+      std::remove("test_bp.db");
       DiskManager disk_manager("test_bp.db");
       BufferPoolManager bpm(3, &disk_manager);  // Small buffer pool
 
@@ -27,6 +27,9 @@ using namespace dbengine;
       assert(page2 != nullptr);
       assert(page3 != nullptr);
 
+      std::cout << "page_id1: " << page_id1 << std::endl;
+      std::cout << "page_id2: " << page_id2 << std::endl;
+      std::cout << "page_id3: " << page_id3 << std::endl;
       assert(page_id1 == 0);
       assert(page_id2 == 1);
       assert(page_id3 == 2);
@@ -43,7 +46,8 @@ using namespace dbengine;
 
   void TestFetchPage() {
       PrintTestHeader("Test 2: Fetch Page");
-
+      
+      std::remove("test_bp.db");
       DiskManager disk_manager("test_bp.db");
       BufferPoolManager bpm(3, &disk_manager);
 
@@ -75,6 +79,7 @@ using namespace dbengine;
   void TestLRUEviction() {
       PrintTestHeader("Test 3: LRU Eviction");
 
+      std::remove("test_bp.db");
       DiskManager disk_manager("test_bp.db");
       BufferPoolManager bpm(3, &disk_manager);  // Only 3 frames
 
@@ -121,6 +126,7 @@ using namespace dbengine;
   void TestPinSemmantics() {
       PrintTestHeader("Test 4: Pin Semantics");
 
+      std::remove("test_bp.db");
       DiskManager disk_manager("test_bp.db");
       BufferPoolManager bpm(3, &disk_manager);
 
@@ -168,6 +174,7 @@ using namespace dbengine;
   void TestDirtyPages() {
       PrintTestHeader("Test 5: Dirty Pages");
 
+      std::remove("test_bp.db");
       DiskManager disk_manager("test_bp.db");
       BufferPoolManager bpm(3, &disk_manager);
 
@@ -210,12 +217,14 @@ using namespace dbengine;
   void TestDeletePage() {
       PrintTestHeader("Test 6: Delete Page");
 
+      std::remove("test_bp.db");
       DiskManager disk_manager("test_bp.db");
       BufferPoolManager bpm(3, &disk_manager);
 
       // Create a page
       page_id_t page_id;
       Page *page = bpm.NewPage(&page_id);
+      assert(page != nullptr);
 
       // Can't delete while pinned
       bool deleted = bpm.DeletePage(page_id);

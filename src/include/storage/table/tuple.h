@@ -30,11 +30,18 @@ namespace dbengine {
 
         // Getters
         inline const char* GetData() const { return data_; }
+        inline char* GetData() { return data_; }
         inline uint32_t GetSize() const { return size_; }
 
         // RID Management
         inline RID GetRID() const { return rid_; }
         inline void SetRID(const RID &rid) { rid_ = rid; }
+
+        void Allocate(uint32_t size) {
+            delete[] data_;
+            data_ = new char[size];
+            size_ = size;
+        }
     
     private:
         char *data_;

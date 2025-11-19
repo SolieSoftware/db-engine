@@ -29,8 +29,6 @@ namespace dbengine {
 
         bpm_->UnpinPage(last_page_id_, false);
 
-        page_id_t new_page_id;
-
         Page *new_page = bpm_->NewPage(&last_page_id_);
 
         if (new_page->InsertRecord(tuple.GetData(), tuple.GetSize(), rid)) {
@@ -38,7 +36,7 @@ namespace dbengine {
             return true;
         }
 
-            bpm_->UnpinPage(last_page_id_, false);
+        bpm_->UnpinPage(last_page_id_, false);
 
         return false;
     }

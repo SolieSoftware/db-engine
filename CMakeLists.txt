@@ -25,14 +25,13 @@ add_library(storage
     src/storage/page/page.cpp
     src/storage/buffer/lru_replacer.cpp
     src/storage/buffer/buffer_pool_manager.cpp
+    src/storage/table/table_heap.cpp
 )
 
 # Test executable
 add_executable(test_disk_manager
     tests/test_disk_manager.cpp
 )
-
-# Link the storage library to the test executable
 target_link_libraries(test_disk_manager storage)
 
 # Page test
@@ -52,6 +51,11 @@ add_executable(test_buffer_pool_manager
     tests/test_buffer_pool_manager.cpp
     )
 target_link_libraries(test_buffer_pool_manager storage)
+
+add_executable(test_table_heap
+    tests/test_table_heap.cpp
+    )
+target_link_libraries(test_table_heap storage)
 
 # Optional: Main executable (when you create it later)
 # add_executable(db_engine, src/main.cpp)

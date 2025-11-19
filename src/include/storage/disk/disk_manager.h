@@ -41,6 +41,8 @@ namespace dbengine {
 
          void DeallocatePage(page_id_t page_id);
 
+         inline int32_t GetNumPages() const { return num_pages_; };
+
          private:
          std::fstream db_io_;  // Stream for database file
          std::string file_name_; // Database file name

@@ -27,5 +27,5 @@ namespace dbengine {
             BufferPoolManager *bpm_;
             page_id_t first_page_id_;
             page_id_t last_page_id_;
-    }
+    };
 }

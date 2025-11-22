@@ -7,17 +7,21 @@ namespace dbengine {
 
     class Tuple {
         // Constructors
-        Tuple() : data_(nullptr), size_(0) {}
+    public:
+        Tuple() : data_(nullptr), size_(0) {}; 
 
-        Tuple(const char *data, uint32_t size) : data_(data), size_(size) {}
+        Tuple(const char *data, uint32_t size) : size_(size) {
+            data_ = new char[size_];
+            std::memcpy(data_, data, size_);
+        }; 
 
-        ~Tuple() { delete[] data_; }
+        ~Tuple() { delete[] data_; };
 
         // Copy constructor and assignment (important!)
         Tuple(const Tuple &other) : size_(other.size_) {
             data_ = new char[size_];
             std::memcpy(data_, other.data_, size_);
-        }
+        };
 
         Tuple& operator=(const Tuple &other) {
             if (this != &other) {
@@ -26,7 +30,7 @@ namespace dbengine {
                 std::memcpy(data_, other.data_, other.size_);
             }
             return *this;
-        }
+        };
 
         // Getters
         inline const char* GetData() const { return data_; }

@@ -7,7 +7,7 @@ namespace dbengine {
     class TableHeap {
         public:
         // Constructor
-        TableHeap(BufferPoolManager *bpm) : bpm_(bpm) {}
+        TableHeap(BufferPoolManager *bpm);
 
         // Insert a tuple, return RID where it was stored
         bool InsertTuple(const Tuple &tuple, RID &rid);

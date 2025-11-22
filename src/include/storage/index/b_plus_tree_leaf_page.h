@@ -3,61 +3,48 @@
 
 #include "common/config.h"
 #include "common/rid.h"
+#include "storageindex/b_plus_tree_page.h"
 
 #include <cstdint>
 
 
 namespace dbengine {
-    struct BPlusTreeLeafPageHeader {
-        page_id_t parent_page_id;
+    struct BPlusTreeLeafPageHeader : BPlusTreePageHeader {
         page_id_t next_page_id;
-        uint32_t page_type;
-        uint32_t size;
-        uint32_t max_size;
     };
 
-    class BPlusTreeLeafPage {
+    class BPlusTreeLeafPage : public BPlusTreePage {
         // Add your public and private members here
         public:
-        void BPlusTreePage(page_idt_t page_id, page_id_t parent_id = INVALID_PAGE_ID, uint32_t page_type, uint32_t size, int32_t max_size = LEAF_PAGE_SIZE);
+        BPlusTreeLeafPage(char *data, int max_size) : BPlusTreePage(data, max_size) {
+            rids_ = reinterpret_cast<RID *>(data_ + sizeof(BPlusTreeLeafPageHeader) + max_size * sizeof(int32_t));
+        };
 
-        uint32_t GetSize() const {
-            return header_.size;
-        }
+        // RIDs arrays - Store RIDs (one per key)
+        inline RID GetRID(int32_t index) const { return rids_[index]; }
 
-        uint32_t GetMaxSize() const {
-            return header_.max_size;
-        }
+        inline void SetRID(int32_t index, const RID &rid);
 
-        // Key getters and setters
+        // Next page ID getters and setters
+        page_id_t GetNextPageId() { return GetHeader()->next_page_id; }
 
-        uint32_t GetKeyAt(int32_t index) const;
+        void SetNextPageId(page_id_t next_page_id);
 
-        void SetKeyAt(int32_t index, int32_t key);
 
-        // Size getter and setters
-        int32_t GetSize() { return header_.size; };
 
-        void SetSize(int32_t size);
 
-        // Page ID getters and setters
 
-        int32_t GetPageId() const {
-            return page_id_;
-        }
-
-        void SetPageId(page_id_t page_id);
-
-        uint32_t GetPageType() const {
-            return header_.page_type;
-        }
 
         private:
-        BPlusTreeLeafPageHeader &GetHeader() {
-            return header_;
-        }
+            BPlusTreeLeafPageHeader* GetHeader() {
+                return reinterpret_cast<BPlusTreeLeafPageHeader *>(data_);
+            };
 
-        BPlusTreeLeafPageHeader header_;
+            BPlusTreeLeafPageHeader const* GetHeader() const {
+                return reinterpret_cast<BPlusTreeLeafPageHeader const*>(data_);
+            };
+
+            RID *rids_;
 
 
 

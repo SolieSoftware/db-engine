@@ -12,7 +12,13 @@ namespace dbengine {
     constexpr int32_t INTERNAL_NODE_SIZE = 500;
 
     // Leaf B Plus Tree Node page size
-    constexpr int32_t LEAF_PAGE_SIZE = 250;
+    constexpr int32_t LEAF_PAGE_SIZE = 250;  
+    
+    // B+ Tree Page Types
+    constexpr uint32_t LEAF_PAGE_TYPE = 0;
+    constexpr uint32_t INTERNAL_PAGE_TYPE = 1;
+
+
 
     // Type alis for page IDs
     using page_id_t = int32_t;

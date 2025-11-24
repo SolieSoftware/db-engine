@@ -55,7 +55,7 @@ namespace dbengine {
             key
         );
 
-        if (found != leaf->keys_ + leaf->GetSize() && *found == key) {
+        if (found != leaf->GetKeys() + leaf->GetSize() && *found == key) {
             uint32_t index = found - leaf->GetKeys();
             rid = leaf->GetRID(index);
             bpm_->UnpinPage(leaf->GetPageId(), false);
@@ -75,8 +75,9 @@ namespace dbengine {
         uint32_t size = leaf->GetSize();
 
         if (size >= max_size_) {
+            Split(leaf->GetPageId());
             bpm_->UnpinPage(leaf->GetPageId(), false);
-            return Split(leaf->GetPageId());
+            return Insert(key, rid);
         }
 
         int32_t *insert_pos = std::lower_bound(
@@ -142,10 +143,12 @@ namespace dbengine {
             new_leaf_page.SetSize(new_size);
             new_leaf_page.SetNextPageId(leaf_page->GetNextPageId());
 
+            bool result;
+
             if (leaf_page->GetParentPageId() == INVALID_PAGE_ID) {
-                return CreateNewRoot(leaf_page->GetPageId(), new_page_id, new_leaf_page.GetKeyAt(0));
+                result = CreateNewRoot(leaf_page->GetPageId(), new_page_id, new_leaf_page.GetKeyAt(0));
             } else {
-                return InsertIntoParent(leaf_page->GetPageId(), new_page_id, new_leaf_page.GetKeyAt(0));
+                result = InsertIntoParent(leaf_page->GetPageId(), new_page_id, new_leaf_page.GetKeyAt(0));
             }
 
             bpm_->UnpinPage(page_id, true);
@@ -157,15 +160,90 @@ namespace dbengine {
 
     bool BPlusTree::CreateNewRoot(page_id_t left_page_id, page_id_t right_page_id, int32_t key) {
         Page *root_page = bpm_->NewPage(&root_page_id_);
-        if (page == nullptr) {
+        if (root_page == nullptr) {
             return false;
         }
 
-        
-        BPlusTreePage *left_page = reinterpret_cast<BPlusTreePage *>(page->GetData());
+        BPlusTreeInternalPage root_internal_page(root_page->GetData(), max_size_);
+
+        root_internal_page.SetPageType(INTERNAL_PAGE);
+        root_internal_page.SetSize(1); // One key for two children
+        root_internal_page.SetPageId(root_page_id_);
+        root_internal_page.SetParentPageId(INVALID_PAGE_ID);
+        root_internal_page.SetKeyAt(0, key);
+        root_internal_page.SetChildPageId(0, left_page_id);
+        root_internal_page.SetChildPageId(1, right_page_id);
+
+        Page *left_page = bpm_->FetchPage(left_page_id);
+        if (left_page == nullptr) {
+            bpm_->UnpinPage(root_page_id_, false);
+            return false;
+        }   
+
+        BPlusTreePage *left_bplus_page = reinterpret_cast<BPlusTreePage *>(left_page->GetData());
+        left_bplus_page->SetParentPageId(root_page_id_);
+
+        Page *right_page = bpm_->FetchPage(right_page_id);
+        if (right_page == nullptr) {
+            bpm_->UnpinPage(left_page_id, false);
+            bpm_->UnpinPage(root_page_id_, false);
+            return false;
+        }
+
+        BPlusTreePage *right_bplus_page = reinterpret_cast<BPlusTreePage *>(right_page->GetData());
+        right_bplus_page->SetParentPageId(root_page_id_);
+
+        bpm_->UnpinPage(left_page_id, true);
+        bpm_->UnpinPage(right_page_id, true);
+        bpm_->UnpinPage(root_page_id_, true);
+
+        return true;
     }
 
     bool BPlusTree::InsertIntoParent(page_id_t left_page_id, page_id_t right_page_id, int32_t key) {
+        Page *left_page = bpm_->FetchPage(left_page_id);
+        if (left_page == nullptr) {
+            return false;
+        }
+        BPlusTreePage *left_bplus_page = reinterpret_cast<BPlusTreePage *>(left_page->GetData());
+
+        page_id_t parent_page_id = left_bplus_page->GetParentPageId();
+
+        Page *parent_page = bpm_->FetchPage(parent_page_id);
+        if (parent_page == nullptr) {
+            bpm_->UnpinPage(left_page_id, false);
+            return false;
+        }
+
+        BPlusTreeInternalPage *parent_internal_page = reinterpret_cast<BPlusTreeInternalPage *>(parent_page->GetData());
+
+        uint32_t size = parent_internal_page->GetSize();
+        if (size >= max_size_) {
+            Split(parent_page_id);
+            bpm_->UnpinPage(left_page_id, false);
+            bpm_->UnpinPage(parent_page_id, false);
+            return InsertIntoParent(left_page_id, right_page_id, key);
+        }
+
+        int32_t *insert_pos = std::lower_bound(
+            parent_internal_page->GetKeys(),
+            parent_internal_page->GetKeys() + size,
+            key
+        );
+
+        uint32_t index = insert_pos - parent_internal_page->GetKeys();
+
+        for (uint32_t i = size; i > index; --i) {
+            parent_internal_page->SetKeyAt(i, parent_internal_page->GetKeyAt(i - 1));
+            parent_internal_page->SetChildPageId(i + 1, parent_internal_page->GetChildPageId(i));
+        }
+
+        parent_internal_page->SetKeyAt(index, key);
+        parent_internal_page->SetChildPageId(index + 1, right_page_id);
+        parent_internal_page->SetSize(size + 1);
+        bpm_->UnpinPage(left_page_id, true);
+        bpm_->UnpinPage(parent_page_id, true);
+
         return true;
     }
 }

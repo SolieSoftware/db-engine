@@ -17,24 +17,27 @@ namespace dbengine {
     class BPlusTreePage {
         // Add your public and private members here
         public:
-        BPlusTreePage(char *data, int max_size) {
+        BPlusTreePage(char *data, uint32_t max_size) {
             data_ = data;
             keys_ = reinterpret_cast<int32_t *>(data_ + sizeof(BPlusTreePageHeader));
         };
 
+        // Keys array getter
+        int32_t* GetKeys() { return keys_; }
+        const int32_t* GetKeys() const { return keys_; }
+
         // Key getters and setters
+        int32_t GetKeyAt(uint32_t index) const;
 
-        uint32_t GetKeyAt(int32_t index) const;
-
-        void SetKeyAt(int32_t index, int32_t key);
+        void SetKeyAt(uint32_t index, int32_t key);
 
         // Size getter and setters
-        int32_t GetSize() { return GetHeader()->size; };
+        uint32_t GetSize() { return GetHeader()->size; };
 
-        void SetSize(int32_t size);
+        void SetSize(uint32_t size);
 
         // Page ID getters and setters
-        int32_t GetPageId() const { return GetHeader()->page_id; }
+        uint32_t GetPageId() const { return GetHeader()->page_id; }
 
         void SetPageId(page_id_t page_id);
 
@@ -56,7 +59,7 @@ namespace dbengine {
 
         // Max size getters
 
-        int32_t GetMaxSize() const {
+        uint32_t GetMaxSize() const {
             return GetHeader()->max_size;
         }
 

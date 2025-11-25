@@ -246,4 +246,39 @@ namespace dbengine {
 
         return true;
     }
+
+    bool BPlusTree::Delete(int32_t key) {
+        // Simple deletion without rebalancing and not addressing underflow issue
+        BPlusTreeLeafPage* leaf = FindLeaf(low_key);
+        if (leaf == nullptr) {
+            return false;
+        }
+
+        int32_t *found = std::lower_bound(
+            leaf->GetKeys(),
+            leaf->GetKeys() + leaf->GetSize(),
+            key
+        );
+
+        if (found == leaf->GetKeys() + leaf->GetSize() || *found != key) {
+            bpm_->UnpinPage(leaf->GetPageId(), false);
+            return false;
+        }
+
+        uint32_t index = found - leaf->GetKeys();
+        for (uint32_t i = index; i < leaf->GetSize() - 1; ++i) {
+            leaf->SetKeyAt(i, leaf->GetKeyAt(i + 1));
+            leaf->SetRID(i, leaf->GetRID(i + 1));
+        }
+
+        leaf->SetSize(leaf->GetSize() - 1);
+        bpm_->UnpinPage(leaf->GetPageId(), true);
+        return true;
+    }
+
+    bool ScanKey(int32_t low_key, int32_t high_key) {
+
+    }
+
+
 }

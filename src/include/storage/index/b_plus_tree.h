@@ -27,6 +27,11 @@ namespace dbengine {
         bool CreateNewRoot(page_id_t left_page_id, page_id_t right_page_id, int32_t key);
         bool InsertIntoParent(page_id_t left_page_id, page_id_t right_page_id, int32_t key);
 
+        // Helper methods for deletion
+        bool HandleLeafUnderflow(page_id_t leaf_page_id);
+        bool MergeLeafNodes(page_id_t left_page_id, page_id_t right_page_id, page_id_t parent_page_id, uint32_t key_index);
+        bool DeleteFromParent(page_id_t parent_page_id, uint32_t key_index);
+        void AdjustRoot();
 
         BufferPoolManager *bpm_;
         page_id_t root_page_id_;

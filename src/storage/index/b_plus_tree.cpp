@@ -249,7 +249,7 @@ namespace dbengine {
 
     bool BPlusTree::Delete(int32_t key) {
         // Simple deletion without rebalancing and not addressing underflow issue
-        BPlusTreeLeafPage* leaf = FindLeaf(low_key);
+        BPlusTreeLeafPage* leaf = FindLeaf(key);
         if (leaf == nullptr) {
             return false;
         }
@@ -272,8 +272,171 @@ namespace dbengine {
         }
 
         leaf->SetSize(leaf->GetSize() - 1);
-        bpm_->UnpinPage(leaf->GetPageId(), true);
+
+        // Check if we need to handle underflow
+        // Root is special case - can have fewer keys
+        if (leaf->GetSize() >= MIN_KEY_SIZE || leaf->GetParentPageId() == INVALID_PAGE_ID) {
+            bpm_->UnpinPage(leaf->GetPageId(), true);
+            return true;
+        }
+
+        // Handle underflow
+        page_id_t leaf_page_id = leaf->GetPageId();
+        bpm_->UnpinPage(leaf_page_id, true);
+
+        return HandleLeafUnderflow(leaf_page_id);
+    }
+
+    bool BPlusTree::HandleLeafUnderflow(page_id_t leaf_page_id) {
+        // Fetch the underflowed leaf
+        Page *leaf_page = bpm_->FetchPage(leaf_page_id);
+        if (leaf_page == nullptr) {
+            return false;
+        }
+
+        BPlusTreeLeafPage *leaf = reinterpret_cast<BPlusTreeLeafPage *>(leaf_page->GetData());
+        page_id_t parent_page_id = leaf->GetParentPageId();
+
+        // Fetch parent
+        Page *parent_page = bpm_->FetchPage(parent_page_id);
+        if (parent_page == nullptr) {
+            bpm_->UnpinPage(leaf_page_id, false);
+            return false;
+        }
+
+        BPlusTreeInternalPage *parent = reinterpret_cast<BPlusTreeInternalPage *>(parent_page->GetData());
+
+        // Find which child index we are in the parent
+        uint32_t child_index = 0;
+        for (uint32_t i = 0; i <= parent->GetSize(); ++i) {
+            if (parent->GetChildPageId(i) == leaf_page_id) {
+                child_index = i;
+                break;
+            }
+        }
+
+        // Try to merge with left sibling first (if exists)
+        if (child_index > 0) {
+            // We have a left sibling
+            page_id_t left_sibling_id = parent->GetChildPageId(child_index - 1);
+
+            // Key index that separates left sibling and current node
+            uint32_t separator_key_index = child_index - 1;
+
+            bpm_->UnpinPage(leaf_page_id, false);
+            bpm_->UnpinPage(parent_page_id, false);
+
+            return MergeLeafNodes(left_sibling_id, leaf_page_id, parent_page_id, separator_key_index);
+        } else {
+            // We're the leftmost child, merge with right sibling
+            page_id_t right_sibling_id = parent->GetChildPageId(child_index + 1);
+
+            // Key index that separates current node and right sibling
+            uint32_t separator_key_index = child_index;
+
+            bpm_->UnpinPage(leaf_page_id, false);
+            bpm_->UnpinPage(parent_page_id, false);
+
+            return MergeLeafNodes(leaf_page_id, right_sibling_id, parent_page_id, separator_key_index);
+        }
+    }
+
+    bool BPlusTree::MergeLeafNodes(page_id_t left_page_id, page_id_t right_page_id,
+                                    page_id_t parent_page_id, uint32_t key_index) {
+        // Fetch both leaf pages
+        Page *left_page = bpm_->FetchPage(left_page_id);
+        Page *right_page = bpm_->FetchPage(right_page_id);
+
+        if (left_page == nullptr || right_page == nullptr) {
+            if (left_page != nullptr) bpm_->UnpinPage(left_page_id, false);
+            if (right_page != nullptr) bpm_->UnpinPage(right_page_id, false);
+            return false;
+        }
+
+        BPlusTreeLeafPage *left_leaf = reinterpret_cast<BPlusTreeLeafPage *>(left_page->GetData());
+        BPlusTreeLeafPage *right_leaf = reinterpret_cast<BPlusTreeLeafPage *>(right_page->GetData());
+
+        // Copy all keys and RIDs from right to left
+        uint32_t left_size = left_leaf->GetSize();
+        uint32_t right_size = right_leaf->GetSize();
+
+        for (uint32_t i = 0; i < right_size; ++i) {
+            left_leaf->SetKeyAt(left_size + i, right_leaf->GetKeyAt(i));
+            left_leaf->SetRID(left_size + i, right_leaf->GetRID(i));
+        }
+
+        left_leaf->SetSize(left_size + right_size);
+
+        // Update the next pointer to skip over the right node
+        left_leaf->SetNextPageId(right_leaf->GetNextPageId());
+
+        // Unpin and delete the right node
+        bpm_->UnpinPage(left_page_id, true);
+        bpm_->UnpinPage(right_page_id, false);
+        bpm_->DeletePage(right_page_id);
+
+        // Remove the separator key from parent
+        return DeleteFromParent(parent_page_id, key_index);
+    }
+
+    bool BPlusTree::DeleteFromParent(page_id_t parent_page_id, uint32_t key_index) {
+        // Fetch parent
+        Page *parent_page = bpm_->FetchPage(parent_page_id);
+        if (parent_page == nullptr) {
+            return false;
+        }
+
+        BPlusTreeInternalPage *parent = reinterpret_cast<BPlusTreeInternalPage *>(parent_page->GetData());
+
+        // Remove the key and shift everything left
+        for (uint32_t i = key_index; i < parent->GetSize() - 1; ++i) {
+            parent->SetKeyAt(i, parent->GetKeyAt(i + 1));
+        }
+
+        // Remove the child pointer (the right child of the deleted key)
+        for (uint32_t i = key_index + 1; i < parent->GetSize(); ++i) {
+            parent->SetChildPageId(i, parent->GetChildPageId(i + 1));
+        }
+
+        parent->SetSize(parent->GetSize() - 1);
+
+        // Check if this is the root
+        if (parent_page_id == root_page_id_) {
+            // If root becomes empty (0 keys, 1 child), make that child the new root
+            if (parent->GetSize() == 0) {
+                page_id_t new_root_id = parent->GetChildPageId(0);
+
+                // Update the new root's parent to INVALID
+                Page *new_root_page = bpm_->FetchPage(new_root_id);
+                if (new_root_page != nullptr) {
+                    BPlusTreePage *new_root = reinterpret_cast<BPlusTreePage *>(new_root_page->GetData());
+                    new_root->SetParentPageId(INVALID_PAGE_ID);
+                    bpm_->UnpinPage(new_root_id, true);
+                }
+
+                // Delete old root and update root_page_id_
+                bpm_->UnpinPage(parent_page_id, false);
+                bpm_->DeletePage(parent_page_id);
+                root_page_id_ = new_root_id;
+
+                return true;
+            }
+
+            bpm_->UnpinPage(parent_page_id, true);
+            return true;
+        }
+
+        // Check if parent now has underflow
+        // For simplicity, we'll only handle leaf underflow (common in many implementations)
+        // Full implementation would recursively handle internal node underflow too
+
+        bpm_->UnpinPage(parent_page_id, true);
         return true;
+    }
+
+    void BPlusTree::AdjustRoot() {
+        // This method would handle root adjustments
+        // Currently handled inline in DeleteFromParent
     }
 
     bool ScanKey(int32_t low_key, int32_t high_key) {

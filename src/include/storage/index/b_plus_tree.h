@@ -31,6 +31,12 @@ namespace dbengine {
         bool HandleLeafUnderflow(page_id_t leaf_page_id);
         bool MergeLeafNodes(page_id_t left_page_id, page_id_t right_page_id, page_id_t parent_page_id, uint32_t key_index);
         bool DeleteFromParent(page_id_t parent_page_id, uint32_t key_index);
+
+        // Internal node underflow handling
+        bool HandleInternalUnderflow(page_id_t internal_page_id);
+        bool MergeInternalNodes(page_id_t left_page_id, page_id_t right_page_id,
+                                page_id_t parent_page_id, uint32_t key_index);
+
         void AdjustRoot();
 
         BufferPoolManager *bpm_;

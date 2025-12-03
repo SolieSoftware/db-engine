@@ -273,8 +273,7 @@ namespace dbengine {
 
         leaf->SetSize(leaf->GetSize() - 1);
 
-        // Check if we need to handle underflow
-        // Root is special case - can have fewer keys
+        // Underflow check
         if (leaf->GetSize() >= MIN_KEY_SIZE || leaf->GetParentPageId() == INVALID_PAGE_ID) {
             bpm_->UnpinPage(leaf->GetPageId(), true);
             return true;
@@ -317,10 +316,8 @@ namespace dbengine {
 
         // Try to merge with left sibling first (if exists)
         if (child_index > 0) {
-            // We have a left sibling
             page_id_t left_sibling_id = parent->GetChildPageId(child_index - 1);
 
-            // Key index that separates left sibling and current node
             uint32_t separator_key_index = child_index - 1;
 
             bpm_->UnpinPage(leaf_page_id, false);
@@ -343,7 +340,7 @@ namespace dbengine {
 
     bool BPlusTree::MergeLeafNodes(page_id_t left_page_id, page_id_t right_page_id,
                                     page_id_t parent_page_id, uint32_t key_index) {
-        // Fetch both leaf pages
+
         Page *left_page = bpm_->FetchPage(left_page_id);
         Page *right_page = bpm_->FetchPage(right_page_id);
 
@@ -426,12 +423,118 @@ namespace dbengine {
             return true;
         }
 
-        // Check if parent now has underflow
-        // For simplicity, we'll only handle leaf underflow (common in many implementations)
-        // Full implementation would recursively handle internal node underflow too
+        if (parent->GetSize() < MIN_KEY_SIZE) {
+            // Parent underflows - need to handle it recursively
+            bpm_->UnpinPage(parent_page_id, true);
+            return HandleInternalUnderflow(parent_page_id);
+        }
 
         bpm_->UnpinPage(parent_page_id, true);
         return true;
+    }
+
+    bool BPlusTree::HandleInternalUnderflow(page_id_t internal_page_id) {
+
+        Page *internal_page = bpm_->FetchPage(internal_page_id);
+        if (internal_page == nullptr) {
+            return false;
+        }
+
+        BPlusTreeInternalPage *internal = reinterpret_cast<BPlusTreeInternalPage *>(internal_page->GetData());
+        page_id_t parent_page_id = internal->GetParentPageId();
+
+        Page *parent_page = bpm_->FetchPage(parent_page_id);
+        if (parent_page == nullptr) {
+            bpm_->UnpinPage(internal_page_id, false);
+            return false;
+        }   
+
+        BPlusTreeInternalPage *parent = reinterpret_cast<BPlusTreeInternalPage *>(parent_page->GetData());
+
+        uint32_t child_index = 0;
+        for (uint32_t i = 0; i <= parent->GetSize(); ++i) {
+            if (parent->GetChildPageId(i) == internal_page_id) {
+                child_index = i;
+                break;
+            }
+        }
+
+        if (child_index > 0) {
+            page_id_t left_sibling_id = parent->GetChildPageId(child_index - 1);
+
+            uint32_t separator_key_index = child_index - 1;
+
+            bpm_->UnpinPage(internal_page_id, false);
+            bpm_->UnpinPage(parent_page_id, false);
+
+            return MergeInternalNodes(left_sibling_id, internal_page_id, parent_page_id, separator_key_index);
+        } else {
+            page_id_t right_sibling_id = parent->GetChildPageId(child_index + 1);
+
+            // Key index that separates current node and right sibling
+            uint32_t separator_key_index = child_index;
+
+            bpm_->UnpinPage(internal_page_id, false);
+            bpm_->UnpinPage(parent_page_id, false);
+
+            return MergeInternalNodes(internal_page_id, right_sibling_id, parent_page_id, separator_key_index);
+        }
+    }
+
+    bool BPlusTree::MergeInternalNodes(page_id_t left_page_id, page_id_t right_page_id,
+                                       page_id_t parent_page_id, uint32_t key_index) {
+        Page *left_page = bpm_->FetchPage(left_page_id);
+        Page *right_page = bpm_->FetchPage(right_page_id);
+        Page *parent_page = bpm_->FetchPage(parent_page_id);
+
+        if (left_page == nullptr || right_page == nullptr) {
+            if (left_page != nullptr) bpm_->UnpinPage(left_page_id, false);
+            if (right_page != nullptr) bpm_->UnpinPage(right_page_id, false);
+            if (parent_page != nullptr) bpm_->UnpinPage(parent_page_id, false);
+            return false;
+        }
+
+        BPlusTreeInternalPage *left_internal = reinterpret_cast<BPlusTreeInternalPage *>(left_page->GetData());
+        BPlusTreeInternalPage *right_internal = reinterpret_cast<BPlusTreeInternalPage *>(right_page->GetData());
+        BPlusTreeInternalPage *parent = reinterpret_cast<BPlusTreeInternalPage *>(parent_page->GetData());
+
+        // Move the separator key from parent to left internal node
+        int32_t separator_key = parent->GetKeyAt(key_index);
+
+        uint32_t left_size = left_internal->GetSize();
+        left_internal->SetKeyAt(left_size, separator_key);
+        left_internal->SetSize(left_size + 1);
+
+        // Copy all keys and child pointers from right to left
+        uint32_t right_size = right_internal->GetSize();
+        for (uint32_t i = 0; i < right_size; ++i) {
+            left_internal->SetKeyAt(left_size + 1 + i, right_internal->GetKeyAt(i));
+            left_internal->SetChildPageId(left_size + 1 + i, right_internal->GetChildPageId(i));
+        }
+        left_internal->SetChildPageId(left_size + 1 + right_size, right_internal->GetChildPageId(right_size));
+
+        // CRITICAL: Update all children's parent pointers to point to left node
+        // This is what makes internal node merge different from leaf merge
+        for (uint32_t i = 0; i <= right_size; ++i) {
+            page_id_t child_id = right_internal->GetChildPageId(i);
+            Page *child_page = bpm_->FetchPage(child_id);
+            if (child_page != nullptr) {
+                BPlusTreePage *child = reinterpret_cast<BPlusTreePage *>(child_page->GetData());
+                child->SetParentPageId(left_page_id);
+                bpm_->UnpinPage(child_id, true);
+            }
+        }
+
+        left_internal->SetSize(left_size + 1 + right_size);
+
+        // Unpin and delete the right node
+        bpm_->UnpinPage(left_page_id, true);
+        bpm_->UnpinPage(right_page_id, false);
+        bpm_->UnpinPage(parent_page_id, false);
+        bpm_->DeletePage(right_page_id);
+
+        // Remove the separator key from parent (may cause recursive underflow)
+        return DeleteFromParent(parent_page_id, key_index);
     }
 
     void BPlusTree::AdjustRoot() {

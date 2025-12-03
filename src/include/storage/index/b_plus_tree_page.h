@@ -32,7 +32,7 @@ namespace dbengine {
         void SetKeyAt(uint32_t index, int32_t key);
 
         // Size getter and setters
-        uint32_t GetSize() { return GetHeader()->size; };
+        uint32_t GetSize() const { return GetHeader()->size; };
 
         void SetSize(uint32_t size);
 

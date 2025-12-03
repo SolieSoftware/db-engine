@@ -4,5 +4,6 @@
 /home/solshortland/projects/db-engine/build/CMakeFiles/test_lru_replacer.dir
 /home/solshortland/projects/db-engine/build/CMakeFiles/test_buffer_pool_manager.dir
 /home/solshortland/projects/db-engine/build/CMakeFiles/test_table_heap.dir
+/home/solshortland/projects/db-engine/build/CMakeFiles/test_b_plus_tree.dir
 /home/solshortland/projects/db-engine/build/CMakeFiles/edit_cache.dir
 /home/solshortland/projects/db-engine/build/CMakeFiles/rebuild_cache.dir

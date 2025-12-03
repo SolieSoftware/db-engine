@@ -18,6 +18,10 @@ namespace dbengine {
     constexpr uint32_t LEAF_PAGE_TYPE = 0;
     constexpr uint32_t INTERNAL_PAGE_TYPE = 1;
 
+    // Shorter aliases for convenience
+    constexpr uint32_t LEAF_PAGE = LEAF_PAGE_TYPE;
+    constexpr uint32_t INTERNAL_PAGE = INTERNAL_PAGE_TYPE;
+
     // Minimum key size for B+ Tree nodes
     constexpr uint32_t MIN_KEY_SIZE = 2;
 

@@ -443,7 +443,6 @@ namespace dbengine {
         BPlusTreeInternalPage *internal = reinterpret_cast<BPlusTreeInternalPage *>(internal_page->GetData());
         page_id_t parent_page_id = internal->GetParentPageId();
 
-        // Fetch parent
         Page *parent_page = bpm_->FetchPage(parent_page_id);
         if (parent_page == nullptr) {
             bpm_->UnpinPage(internal_page_id, false);
@@ -452,7 +451,6 @@ namespace dbengine {
 
         BPlusTreeInternalPage *parent = reinterpret_cast<BPlusTreeInternalPage *>(parent_page->GetData());
 
-        // Find which child index we are
         uint32_t child_index = 0;
         for (uint32_t i = 0; i <= parent->GetSize(); ++i) {
             if (parent->GetChildPageId(i) == internal_page_id) {
@@ -461,7 +459,6 @@ namespace dbengine {
             }
         }
 
-        // Try to merge with left sibling first (if exists)
         if (child_index > 0) {
             page_id_t left_sibling_id = parent->GetChildPageId(child_index - 1);
 
@@ -472,7 +469,6 @@ namespace dbengine {
 
             return MergeInternalNodes(left_sibling_id, internal_page_id, parent_page_id, separator_key_index);
         } else {
-            // We're the leftmost child, merge with right sibling
             page_id_t right_sibling_id = parent->GetChildPageId(child_index + 1);
 
             // Key index that separates current node and right sibling
@@ -500,17 +496,9 @@ namespace dbengine {
 
         BPlusTreeInternalPage *left_internal = reinterpret_cast<BPlusTreeInternalPage *>(left_page->GetData());
         BPlusTreeInternalPage *right_internal = reinterpret_cast<BPlusTreeInternalPage *>(right_page->GetData());
-        
+        BPlusTreeInternalPage *parent = reinterpret_cast<BPlusTreeInternalPage *>(parent_page->GetData());
 
         // Move the separator key from parent to left internal node
-        Page *parent_page = bpm_->FetchPage(parent_page_id);
-        if (parent_page == nullptr) {
-            bpm_->UnpinPage(left_page_id, false);
-            bpm_->UnpinPage(right_page_id, false);
-            return false;
-        }
-
-        BPlusTreeInternalPage *parent = reinterpret_cast<BPlusTreeInternalPage *>(parent_page->GetData());
         int32_t separator_key = parent->GetKeyAt(key_index);
 
         uint32_t left_size = left_internal->GetSize();
@@ -525,15 +513,29 @@ namespace dbengine {
         }
         left_internal->SetChildPageId(left_size + 1 + right_size, right_internal->GetChildPageId(right_size));
 
+        // CRITICAL: Update all children's parent pointers to point to left node
+        // This is what makes internal node merge different from leaf merge
+        for (uint32_t i = 0; i <= right_size; ++i) {
+            page_id_t child_id = right_internal->GetChildPageId(i);
+            Page *child_page = bpm_->FetchPage(child_id);
+            if (child_page != nullptr) {
+                BPlusTreePage *child = reinterpret_cast<BPlusTreePage *>(child_page->GetData());
+                child->SetParentPageId(left_page_id);
+                bpm_->UnpinPage(child_id, true);
+            }
+        }
+
         left_internal->SetSize(left_size + 1 + right_size);
 
         // Unpin and delete the right node
         bpm_->UnpinPage(left_page_id, true);
         bpm_->UnpinPage(right_page_id, false);
+        bpm_->UnpinPage(parent_page_id, false);
         bpm_->DeletePage(right_page_id);
 
-        // Remove the separator key from parent
-        return DeleteFromParent(parent_page_id, key_index); 
+        // Remove the separator key from parent (may cause recursive underflow)
+        return DeleteFromParent(parent_page_id, key_index);
+    }
 
     void BPlusTree::AdjustRoot() {
         // This method would handle root adjustments

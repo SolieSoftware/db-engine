@@ -26,6 +26,10 @@ add_library(storage
     src/storage/buffer/lru_replacer.cpp
     src/storage/buffer/buffer_pool_manager.cpp
     src/storage/table/table_heap.cpp
+    src/storage/index/b_plus_tree.cpp
+    src/storage/index/b_plus_tree_page.cpp
+    src/storage/index/b_plus_tree_leaf_page.cpp
+    src/storage/index/b_plus_tree_internal_page.cpp
 )
 
 # Test executable
@@ -56,6 +60,11 @@ add_executable(test_table_heap
     tests/test_table_heap.cpp
     )
 target_link_libraries(test_table_heap storage)
+
+add_executable(test_b_plus_tree
+    tests/test_b_plus_tree.cpp
+    )
+target_link_libraries(test_b_plus_tree storage)
 
 # Optional: Main executable (when you create it later)
 # add_executable(db_engine, src/main.cpp)

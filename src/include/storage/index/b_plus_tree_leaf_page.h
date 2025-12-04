@@ -23,7 +23,7 @@ namespace dbengine {
         // RIDs arrays - Store RIDs (one per key)
         inline RID GetRID(uint32_t index) const { return rids_[index]; }
 
-        inline void SetRID(uint32_t index, const RID &rid);
+        void SetRID(uint32_t index, const RID &rid);
 
         // Next page ID getters and setters
         page_id_t GetNextPageId() { return GetHeader()->next_page_id; }

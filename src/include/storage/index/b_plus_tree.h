@@ -37,11 +37,10 @@ namespace dbengine {
         bool MergeInternalNodes(page_id_t left_page_id, page_id_t right_page_id,
                                 page_id_t parent_page_id, uint32_t key_index);
 
-        void AdjustRoot();
 
         BufferPoolManager *bpm_;
         page_id_t root_page_id_;
-        int32_t max_size_;
+        uint32_t max_size_;
 
     };
 }

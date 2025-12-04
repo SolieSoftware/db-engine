@@ -18,6 +18,7 @@ namespace dbengine {
         // Add your public and private members here
         public:
         BPlusTreePage(char *data, uint32_t max_size) {
+            (void)max_size;
             data_ = data;
             keys_ = reinterpret_cast<int32_t *>(data_ + sizeof(BPlusTreePageHeader));
         };

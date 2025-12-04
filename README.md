@@ -467,6 +467,7 @@ This is a learning project. Contributions that improve code clarity, add documen
 
 - **Database System Concepts** by Silberschatz, Korth, Sudarshan
 - **Database Management Systems** by Ramakrishnan, Gehrke
+- **Designing Data Intensive Applications** by Kleppmann, Martin
 - **CMU 15-445/645: Database Systems** course materials
 - **PostgreSQL Internals** documentation
 - **SQLite Architecture** documentation

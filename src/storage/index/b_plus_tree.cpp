@@ -417,10 +417,8 @@ namespace dbengine {
             return false;
         }
 
-        // Create stack-allocated wrapper
         BPlusTreeLeafPage leaf(page->GetData(), max_size_);
-        page_id_t leaf_page_id = leaf.GetPageId();  // Use BPlusTreePage::GetPageId()
-
+        page_id_t leaf_page_id = leaf.GetPageId();  
         int32_t *found = std::lower_bound(
             leaf.GetKeys(),
             leaf.GetKeys() + leaf.GetSize(),
@@ -440,20 +438,17 @@ namespace dbengine {
 
         leaf.SetSize(leaf.GetSize() - 1);
 
-        // Underflow check
         if (leaf.GetSize() >= MIN_KEY_SIZE || leaf.GetParentPageId() == INVALID_PAGE_ID) {
             bpm_->UnpinPage(leaf_page_id, true);
             return true;
         }
 
-        // Handle underflow
         bpm_->UnpinPage(leaf_page_id, true);
 
         return HandleLeafUnderflow(leaf_page_id);
     }
 
     bool BPlusTree::HandleLeafUnderflow(page_id_t leaf_page_id) {
-        // Fetch the underflowed leaf
         Page *leaf_page = bpm_->FetchPage(leaf_page_id);
         if (leaf_page == nullptr) {
             return false;
@@ -462,7 +457,6 @@ namespace dbengine {
         BPlusTreeLeafPage leaf(leaf_page->GetData(), max_size_);
         page_id_t parent_page_id = leaf.GetParentPageId();
 
-        // Fetch parent
         Page *parent_page = bpm_->FetchPage(parent_page_id);
         if (parent_page == nullptr) {
             bpm_->UnpinPage(leaf_page_id, false);
@@ -471,7 +465,6 @@ namespace dbengine {
 
         BPlusTreeInternalPage parent(parent_page->GetData(), max_size_);
 
-        // Find which child index we are in the parent
         uint32_t child_index = 0;
         for (uint32_t i = 0; i <= parent.GetSize(); ++i) {
             if (parent.GetChildPageId(i) == leaf_page_id) {
@@ -561,13 +554,11 @@ namespace dbengine {
 
         parent.SetSize(parent.GetSize() - 1);
 
-        // Check if this is the root
         if (parent_page_id == root_page_id_) {
-            // If root becomes empty (0 keys, 1 child), make that child the new root
             if (parent.GetSize() == 0) {
                 page_id_t new_root_id = parent.GetChildPageId(0);
 
-                // Update the new root's parent to INVALID
+
                 Page *new_root_page = bpm_->FetchPage(new_root_id);
                 if (new_root_page != nullptr) {
                     BPlusTreePage new_root(new_root_page->GetData(), max_size_);
@@ -575,7 +566,7 @@ namespace dbengine {
                     bpm_->UnpinPage(new_root_id, true);
                 }
 
-                // Delete old root and update root_page_id_
+
                 bpm_->UnpinPage(parent_page_id, false);
                 bpm_->DeletePage(parent_page_id);
                 root_page_id_ = new_root_id;
@@ -588,7 +579,6 @@ namespace dbengine {
         }
 
         if (parent.GetSize() < MIN_KEY_SIZE) {
-            // Parent underflows - need to handle it recursively
             bpm_->UnpinPage(parent_page_id, true);
             return HandleInternalUnderflow(parent_page_id);
         }
@@ -635,7 +625,6 @@ namespace dbengine {
         } else {
             page_id_t right_sibling_id = parent.GetChildPageId(child_index + 1);
 
-            // Key index that separates current node and right sibling
             uint32_t separator_key_index = child_index;
 
             bpm_->UnpinPage(internal_page_id, false);
@@ -662,14 +651,13 @@ namespace dbengine {
         BPlusTreeInternalPage right_internal(right_page->GetData(), max_size_);
         BPlusTreeInternalPage parent(parent_page->GetData(), max_size_);
 
-        // Move the separator key from parent to left internal node
+
         int32_t separator_key = parent.GetKeyAt(key_index);
 
         uint32_t left_size = left_internal.GetSize();
         left_internal.SetKeyAt(left_size, separator_key);
         left_internal.SetSize(left_size + 1);
 
-        // Copy all keys and child pointers from right to left
         uint32_t right_size = right_internal.GetSize();
         for (uint32_t i = 0; i < right_size; ++i) {
             left_internal.SetKeyAt(left_size + 1 + i, right_internal.GetKeyAt(i));
@@ -677,7 +665,6 @@ namespace dbengine {
         }
         left_internal.SetChildPageId(left_size + 1 + right_size, right_internal.GetChildPageId(right_size));
 
-        // This is what makes internal node merge different from leaf merge
         for (uint32_t i = 0; i <= right_size; ++i) {
             page_id_t child_id = right_internal.GetChildPageId(i);
             Page *child_page = bpm_->FetchPage(child_id);
@@ -690,13 +677,11 @@ namespace dbengine {
 
         left_internal.SetSize(left_size + 1 + right_size);
 
-        // Unpin and delete the right node
         bpm_->UnpinPage(left_page_id, true);
         bpm_->UnpinPage(right_page_id, false);
         bpm_->UnpinPage(parent_page_id, false);
         bpm_->DeletePage(right_page_id);
 
-        // Remove the separator key from parent (may cause recursive underflow)
         return DeleteFromParent(parent_page_id, key_index);
     }
 

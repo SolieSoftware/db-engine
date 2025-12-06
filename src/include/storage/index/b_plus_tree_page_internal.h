@@ -27,12 +27,18 @@ namespace dbengine {
 
         // Given a key, find which child to follow
         uint32_t ValueIndex(int32_t key) const {
-
-            int32_t *first_greater_equal = std::lower_bound(
+            // Use upper_bound to find the first key GREATER than the search key
+            // This ensures that if key == separator, we go to the right child
+            // Example: keys [30, 50], children [0, 1, 2]
+            //   key=10 -> upper_bound points to 30 (index 0) -> child 0
+            //   key=30 -> upper_bound points to 50 (index 1) -> child 1
+            //   key=50 -> upper_bound points to end (index 2) -> child 2
+            //   key=60 -> upper_bound points to end (index 2) -> child 2
+            int32_t *first_greater = std::upper_bound(
                 keys_, keys_ + GetSize(), key
             );
 
-            return first_greater_equal - keys_;
+            return first_greater - keys_;
         }
 
         private:

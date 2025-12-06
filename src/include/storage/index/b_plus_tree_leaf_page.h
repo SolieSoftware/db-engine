@@ -17,6 +17,9 @@ namespace dbengine {
         // Add your public and private members here
         public:
         BPlusTreeLeafPage(char *data, uint32_t max_size) : BPlusTreePage(data, max_size) {
+            // IMPORTANT: For leaf pages, keys start AFTER the next_page_id field!
+            // Override the keys_ pointer from the base class which assumes internal page layout
+            keys_ = reinterpret_cast<int32_t *>(data_ + sizeof(BPlusTreeLeafPageHeader));
             rids_ = reinterpret_cast<RID *>(data_ + sizeof(BPlusTreeLeafPageHeader) + max_size * sizeof(int32_t));
         };
 

@@ -21,7 +21,7 @@ namespace dbengine {
         bool Delete(int32_t key);
 
         private:
-        BPlusTreeLeafPage* FindLeaf(int32_t key);
+        Page* FindLeaf(int32_t key);
         bool Split(page_id_t page_id);
 
         bool CreateNewRoot(page_id_t left_page_id, page_id_t right_page_id, int32_t key);

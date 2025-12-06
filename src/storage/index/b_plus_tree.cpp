@@ -14,8 +14,6 @@ namespace dbengine {
             throw std::runtime_error("Failed to allocate root page for B+ tree");
         }
 
-        std::cout << "[BPlusTree Constructor] Allocated root page with ID: " << root_page_id_ << std::endl;
-
         std::memset(root_page->GetData(), 0, PAGE_SIZE);
 
         BPlusTreeLeafPage root_leaf_page(root_page->GetData(), max_size_);
@@ -41,7 +39,6 @@ namespace dbengine {
             }
 
             char* page_data = page->GetData();
-
             BPlusTreePageHeader *header = reinterpret_cast<BPlusTreePageHeader *>(page_data);
             uint32_t page_type = header->page_type;
 
@@ -53,7 +50,7 @@ namespace dbengine {
             uint32_t child_index = internal_page.ValueIndex(key);
             page_id_t next_page_id = internal_page.GetChildPageId(child_index);
 
-            bpm_->UnpinPage(current_page_id, false);  // Use current_page_id, not page->GetPageId()
+            bpm_->UnpinPage(current_page_id, false);
             current_page_id = next_page_id;
         }
     }
@@ -66,7 +63,7 @@ namespace dbengine {
         }
 
         BPlusTreeLeafPage leaf(page->GetData(), max_size_);
-        page_id_t page_id = leaf.GetPageId();  // Use BPlusTreePage::GetPageId()
+        page_id_t page_id = leaf.GetPageId();
 
         int32_t *found = std::lower_bound(
             leaf.GetKeys(),
@@ -92,14 +89,11 @@ namespace dbengine {
         }
 
         BPlusTreeLeafPage leaf(page->GetData(), max_size_);
-        page_id_t found_page_id = leaf.GetPageId();  // Use BPlusTreePage::GetPageId(), not Page::GetPageId()!
-        std::cout << "[Insert] Found leaf page " << found_page_id << " for key " << key << std::endl;
+        page_id_t found_page_id = leaf.GetPageId();
 
         uint32_t size = leaf.GetSize();
-        std::cout << "[Insert] Leaf page " << found_page_id << " has size " << size << " (max: " << max_size_ << ")" << std::endl;
 
         if (size >= max_size_) {
-            std::cout << "[Insert] Page " << found_page_id << " is full, triggering split" << std::endl;
             Split(found_page_id);
             bpm_->UnpinPage(found_page_id, false);
             return Insert(key, rid);
@@ -127,10 +121,8 @@ namespace dbengine {
     }
 
     bool BPlusTree::Split(page_id_t page_id) {
-        std::cout << "[Split] Splitting page " << page_id << std::endl;
         Page *page = bpm_->FetchPage(page_id);
         if (page == nullptr) {
-            std::cout << "[Split] ERROR: Failed to fetch page " << page_id << std::endl;
             return false;
         }
 
@@ -139,38 +131,22 @@ namespace dbengine {
         uint32_t page_type = header->page_type;
 
         if (page_type == LEAF_PAGE) {
-            std::cout << "[Split] Splitting LEAF page " << page_id << std::endl;
-            // Create stack-allocated wrapper with proper constructor
             BPlusTreeLeafPage leaf_page(page_data, max_size_);
 
             page_id_t new_page_id;
             Page *new_page = bpm_->NewPage(&new_page_id);
             if (new_page == nullptr) {
-                std::cout << "[Split] ERROR: Failed to allocate new page" << std::endl;
                 bpm_->UnpinPage(page_id, false);
                 return false;
             }
-            std::cout << "[Split] Allocated new leaf page " << new_page_id << std::endl;
 
-            // Initialize new page data
             std::memset(new_page->GetData(), 0, PAGE_SIZE);
-
             BPlusTreeLeafPage new_leaf_page(new_page->GetData(), max_size_);
 
             uint32_t total_size = leaf_page.GetSize();
             uint32_t mid_index = total_size / 2;
-
-            std::cout << "[Split] total_size=" << total_size << ", mid_index=" << mid_index << std::endl;
-            std::cout << "[Split] Keys before split: ";
-            for (uint32_t i = 0; i < total_size; ++i) {
-                std::cout << leaf_page.GetKeyAt(i) << " ";
-            }
-            std::cout << std::endl;
-
-            // Save the original next_page_id before we modify it
             page_id_t original_next_page_id = leaf_page.GetNextPageId();
 
-            // Initialize header for new leaf page
             BPlusTreeLeafPageHeader *new_header = reinterpret_cast<BPlusTreeLeafPageHeader *>(new_page->GetData());
             new_header->max_size = max_size_;
             new_header->page_type = LEAF_PAGE;
@@ -181,31 +157,19 @@ namespace dbengine {
 
             uint32_t new_size = 0;
             for (uint32_t i = mid_index; i < total_size; ++i) {
-                int32_t key_to_copy = leaf_page.GetKeyAt(i);
-                std::cout << "[Split] Copying key " << key_to_copy << " from index " << i
-                          << " to new page index " << (i - mid_index) << std::endl;
-                new_leaf_page.SetKeyAt(i - mid_index, key_to_copy);
+                new_leaf_page.SetKeyAt(i - mid_index, leaf_page.GetKeyAt(i));
                 new_leaf_page.SetRID(i - mid_index, leaf_page.GetRID(i));
                 new_size++;
             }
 
-            std::cout << "[Split] After copying, new page keys: ";
-            for (uint32_t i = 0; i < new_size; ++i) {
-                std::cout << new_leaf_page.GetKeyAt(i) << " ";
-            }
-            std::cout << std::endl;
-
             leaf_page.SetSize(mid_index);
             leaf_page.SetNextPageId(new_page_id);
-
             new_leaf_page.SetSize(new_size);
-            new_leaf_page.SetNextPageId(original_next_page_id);  // Use the saved value, not the modified one!
+            new_leaf_page.SetNextPageId(original_next_page_id);
 
             int32_t separator_key = new_leaf_page.GetKeyAt(0);
-            std::cout << "[Split] Separator key (first key of right page): " << separator_key << std::endl;
 
             bool result;
-
             if (leaf_page.GetParentPageId() == INVALID_PAGE_ID) {
                 result = CreateNewRoot(leaf_page.GetPageId(), new_page_id, separator_key);
             } else {
@@ -219,10 +183,8 @@ namespace dbengine {
 
             bpm_->UnpinPage(page_id, true);
             bpm_->UnpinPage(new_page_id, true);
-
             return true;
         } else {
-            // Internal page split - create stack-allocated wrapper
             BPlusTreeInternalPage internal_page(page_data, max_size_);
 
             page_id_t new_page_id;
@@ -232,40 +194,29 @@ namespace dbengine {
                 return false;
             }
 
-            // Initialize new page data
             std::memset(new_page->GetData(), 0, PAGE_SIZE);
-
             BPlusTreeInternalPage new_internal_page(new_page->GetData(), max_size_);
 
             uint32_t total_size = internal_page.GetSize();
             uint32_t mid_index = total_size / 2;
-
-            // The key at mid_index will be promoted to parent
             int32_t separator_key = internal_page.GetKeyAt(mid_index);
 
-            // Initialize header for new internal page
             BPlusTreePageHeader *new_header = reinterpret_cast<BPlusTreePageHeader *>(new_page->GetData());
             new_header->max_size = max_size_;
             new_header->page_type = INTERNAL_PAGE;
             new_header->page_id = new_page_id;
             new_header->parent_page_id = internal_page.GetParentPageId();
 
-            // Move keys [mid+1...total_size) to new page
-            // Move children [mid+1...total_size] to new page
             uint32_t new_size = 0;
             for (uint32_t i = mid_index + 1; i < total_size; ++i) {
                 new_internal_page.SetKeyAt(new_size, internal_page.GetKeyAt(i));
                 new_internal_page.SetChildPageId(new_size, internal_page.GetChildPageId(i));
                 new_size++;
             }
-            // Don't forget the last child pointer
             new_internal_page.SetChildPageId(new_size, internal_page.GetChildPageId(total_size));
             new_internal_page.SetSize(new_size);
-
-            // Update left page size (keys [0...mid-1])
             internal_page.SetSize(mid_index);
 
-            // Update parent pointers for children that moved to new page
             for (uint32_t i = 0; i <= new_size; ++i) {
                 page_id_t child_id = new_internal_page.GetChildPageId(i);
                 Page *child_page = bpm_->FetchPage(child_id);
@@ -291,31 +242,23 @@ namespace dbengine {
 
             bpm_->UnpinPage(page_id, true);
             bpm_->UnpinPage(new_page_id, true);
-
             return true;
         }
     }
 
     bool BPlusTree::CreateNewRoot(page_id_t left_page_id, page_id_t right_page_id, int32_t key) {
-        std::cout << "[CreateNewRoot] Creating new root with left=" << left_page_id
-                  << ", right=" << right_page_id << ", key=" << key << std::endl;
         Page *root_page = bpm_->NewPage(&root_page_id_);
         if (root_page == nullptr) {
-            std::cout << "[CreateNewRoot] ERROR: Failed to allocate new root page" << std::endl;
             return false;
         }
-        std::cout << "[CreateNewRoot] New root page ID: " << root_page_id_ << std::endl;
 
-        // Initialize new root page data
         std::memset(root_page->GetData(), 0, PAGE_SIZE);
-
         BPlusTreeInternalPage root_internal_page(root_page->GetData(), max_size_);
 
-        // Initialize header for new root
         BPlusTreePageHeader *root_header = reinterpret_cast<BPlusTreePageHeader *>(root_page->GetData());
         root_header->max_size = max_size_;
         root_header->page_type = INTERNAL_PAGE;
-        root_header->size = 1; // One key for two children
+        root_header->size = 1;
         root_header->page_id = root_page_id_;
         root_header->parent_page_id = INVALID_PAGE_ID;
 
@@ -328,7 +271,6 @@ namespace dbengine {
             bpm_->UnpinPage(root_page_id_, false);
             return false;
         }
-
         BPlusTreePage left_bplus_page(left_page->GetData(), max_size_);
         left_bplus_page.SetParentPageId(root_page_id_);
 
@@ -338,14 +280,12 @@ namespace dbengine {
             bpm_->UnpinPage(root_page_id_, false);
             return false;
         }
-
         BPlusTreePage right_bplus_page(right_page->GetData(), max_size_);
         right_bplus_page.SetParentPageId(root_page_id_);
 
         bpm_->UnpinPage(left_page_id, true);
         bpm_->UnpinPage(right_page_id, true);
         bpm_->UnpinPage(root_page_id_, true);
-
         return true;
     }
 
@@ -367,10 +307,85 @@ namespace dbengine {
         BPlusTreeInternalPage parent_internal_page(parent_page->GetData(), max_size_);
 
         uint32_t size = parent_internal_page.GetSize();
+
         if (size >= max_size_) {
-            Split(parent_page_id);
+            page_id_t old_parent_id = parent_page_id;
+
+            BPlusTreeInternalPage temp_parent(parent_page->GetData(), max_size_);
+            uint32_t old_mid_index = size / 2;
+            int32_t split_separator = temp_parent.GetKeyAt(old_mid_index);
+
             bpm_->UnpinPage(left_page_id, false);
             bpm_->UnpinPage(parent_page_id, false);
+            Split(parent_page_id);
+
+            Page *split_parent_page = bpm_->FetchPage(old_parent_id);
+            if (split_parent_page == nullptr) {
+                return false;
+            }
+            BPlusTreePage split_parent_wrapper(split_parent_page->GetData(), max_size_);
+            page_id_t split_parent_parent_id = split_parent_wrapper.GetParentPageId();
+            bpm_->UnpinPage(old_parent_id, false);
+
+            if (split_parent_parent_id == INVALID_PAGE_ID) {
+                Page *root = bpm_->FetchPage(root_page_id_);
+                if (root == nullptr) {
+                    return false;
+                }
+                BPlusTreeInternalPage root_internal(root->GetData(), max_size_);
+                page_id_t left_split_page = root_internal.GetChildPageId(0);
+                page_id_t right_split_page = root_internal.GetChildPageId(1);
+                bpm_->UnpinPage(root_page_id_, false);
+
+                Page *update_left = bpm_->FetchPage(left_page_id);
+                if (update_left != nullptr) {
+                    BPlusTreePage left_wrapper(update_left->GetData(), max_size_);
+                    left_wrapper.SetParentPageId(key < split_separator ? left_split_page : right_split_page);
+                    bpm_->UnpinPage(left_page_id, true);
+                }
+
+                Page *update_right = bpm_->FetchPage(right_page_id);
+                if (update_right != nullptr) {
+                    BPlusTreePage right_wrapper(update_right->GetData(), max_size_);
+                    right_wrapper.SetParentPageId(key < split_separator ? left_split_page : right_split_page);
+                    bpm_->UnpinPage(right_page_id, true);
+                }
+            } else {
+                Page *grandparent = bpm_->FetchPage(split_parent_parent_id);
+                if (grandparent == nullptr) {
+                    return false;
+                }
+                BPlusTreeInternalPage grandparent_internal(grandparent->GetData(), max_size_);
+
+                page_id_t right_split_page = INVALID_PAGE_ID;
+                for (uint32_t i = 0; i <= grandparent_internal.GetSize(); ++i) {
+                    page_id_t child_id = grandparent_internal.GetChildPageId(i);
+                    if (child_id == old_parent_id && i + 1 <= grandparent_internal.GetSize()) {
+                        right_split_page = grandparent_internal.GetChildPageId(i + 1);
+                        break;
+                    }
+                }
+                bpm_->UnpinPage(split_parent_parent_id, false);
+
+                if (right_split_page == INVALID_PAGE_ID) {
+                    return false;
+                }
+
+                Page *update_left = bpm_->FetchPage(left_page_id);
+                if (update_left != nullptr) {
+                    BPlusTreePage left_wrapper(update_left->GetData(), max_size_);
+                    left_wrapper.SetParentPageId(key < split_separator ? old_parent_id : right_split_page);
+                    bpm_->UnpinPage(left_page_id, true);
+                }
+
+                Page *update_right = bpm_->FetchPage(right_page_id);
+                if (update_right != nullptr) {
+                    BPlusTreePage right_wrapper(update_right->GetData(), max_size_);
+                    right_wrapper.SetParentPageId(key < split_separator ? old_parent_id : right_split_page);
+                    bpm_->UnpinPage(right_page_id, true);
+                }
+            }
+
             return InsertIntoParent(left_page_id, right_page_id, key);
         }
 
@@ -390,9 +405,9 @@ namespace dbengine {
         parent_internal_page.SetKeyAt(index, key);
         parent_internal_page.SetChildPageId(index + 1, right_page_id);
         parent_internal_page.SetSize(size + 1);
+
         bpm_->UnpinPage(left_page_id, true);
         bpm_->UnpinPage(parent_page_id, true);
-
         return true;
     }
 

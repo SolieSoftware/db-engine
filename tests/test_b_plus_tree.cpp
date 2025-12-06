@@ -128,7 +128,11 @@ void TestInsertWithSplit() {
     std::cout << "Verifying all keys after splits..." << std::endl;
     for (int32_t i = 1; i <= 10; ++i) {
         RID search_rid;
-        bool found = bpt.Search(i * 10, search_rid);
+        int32_t key = i * 10;
+        bool found = bpt.Search(key, search_rid);
+        if (!found) {
+            std::cout << "ERROR: Could not find key " << key << std::endl;
+        }
         assert(found && "All keys should be found after split");
         assert(search_rid.GetSlotNum() == i);
     }

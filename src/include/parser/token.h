@@ -7,7 +7,7 @@ namespace dbengine {
         SELECT, FROM , WHERE, INSERT, INTO, VALUES,
 
         // Identifiers and Literals
-        IDENTIFIER, NUMBERS, STRING, 
+        IDENTIFIER, NUMBER, STRING, 
 
         // Operators
         EQUALS, NOT_EQUALS, LESS_THAN, GREATER_THAN, LESS_EQUAL, GREATER_EQUAL,
@@ -21,15 +21,13 @@ namespace dbengine {
 
     class Token {
         public:
-        Token(TokenType token_type, char[] token_content) : token_(token_type), token_content_(token_content) {};
+        Token(TokenType type, const std::string &lexeme) : type_(token_type), lexeme(token_content) {};
 
-        TokenType GetTokenType() {return token_type_; }
-
-        char[] GetTokenContent() {return token_content_; }
+        TokenType GetTokenType() const {return type_; }
+        std::string GetTokenContent() const {return lexeme_; }
 
         private:
         TokenType token_type_;
-        char[] token_content_;
-
+        std::string lexeme_;
     };
 }

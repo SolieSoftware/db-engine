@@ -314,6 +314,38 @@ build test_b_plus_tree: CXX_EXECUTABLE_LINKER__test_b_plus_tree_ CMakeFiles/test
   TARGET_FILE = test_b_plus_tree
   TARGET_PDB = test_b_plus_tree.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target test_query_execution
+
+
+#############################################
+# Order-only phony target for test_query_execution
+
+build cmake_object_order_depends_target_test_query_execution: phony || cmake_object_order_depends_target_storage
+
+build CMakeFiles/test_query_execution.dir/tests/test_query_execution.cpp.o: CXX_COMPILER__test_query_execution_unscanned_ /home/solshortland/projects/db-engine/tests/test_query_execution.cpp || cmake_object_order_depends_target_test_query_execution
+  DEP_FILE = CMakeFiles/test_query_execution.dir/tests/test_query_execution.cpp.o.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  OBJECT_DIR = CMakeFiles/test_query_execution.dir
+  OBJECT_FILE_DIR = CMakeFiles/test_query_execution.dir/tests
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_query_execution
+
+
+#############################################
+# Link the executable test_query_execution
+
+build test_query_execution: CXX_EXECUTABLE_LINKER__test_query_execution_ CMakeFiles/test_query_execution.dir/tests/test_query_execution.cpp.o | libstorage.a || libstorage.a
+  LINK_LIBRARIES = libstorage.a
+  OBJECT_DIR = CMakeFiles/test_query_execution.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = test_query_execution
+  TARGET_PDB = test_query_execution.dbg
+
 
 #############################################
 # Utility command for edit_cache
@@ -350,7 +382,7 @@ build storage: phony libstorage.a
 #############################################
 # Folder: /home/solshortland/projects/db-engine/build
 
-build all: phony libstorage.a test_disk_manager test_page test_lru_replacer test_buffer_pool_manager test_table_heap test_b_plus_tree
+build all: phony libstorage.a test_disk_manager test_page test_lru_replacer test_buffer_pool_manager test_table_heap test_b_plus_tree test_query_execution
 
 # =============================================================================
 # Built-in targets

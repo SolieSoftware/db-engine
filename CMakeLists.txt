@@ -66,5 +66,10 @@ add_executable(test_b_plus_tree
     )
 target_link_libraries(test_b_plus_tree storage)
 
+add_executable(test_query_execution
+    tests/test_query_execution.cpp
+    )
+target_link_libraries(test_query_execution storage)
+
 # Optional: Main executable (when you create it later)
 # add_executable(db_engine, src/main.cpp)

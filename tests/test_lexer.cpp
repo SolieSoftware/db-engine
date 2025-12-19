@@ -24,8 +24,7 @@ bool TestBasicSelect() {
 
     PrintTokens(tokens);
 
-    // Verify we got the right tokens
-    if (tokens.size() != 5) {  // SELECT, id, FROM, users, EOF
+    if (tokens.size() != 5) { 
         std::cout << "✗ Expected 5 tokens, got " << tokens.size() << std::endl;
         return false;
     }
@@ -41,9 +40,35 @@ bool TestBasicSelect() {
         return false;
     }
 
-    // ... more checks ...
-
     std::cout << "✓ Basic SELECT test passed!" << std::endl;
+    return true;
+}
+
+bool TestSelectStar() {
+    PrintTestHeader("Test 2: Select STAR");
+
+    Lexer lexer("SELECT * FROM users");
+    auto tokens = lexer.Tokenize();
+
+    PrintTokens(tokens);
+
+    if (tokens.size() != 5) {
+        std::cout << "✗ Expected 5 tokens, got " << tokens.size() << std::endl;
+        return false;
+    }
+
+    if (tokens[0].GetTokenType() != TokenType::SELECT) {
+        std::cout << "✗ First token should be SELECT" << std::endl;
+        return false;
+    }
+
+    if (tokens[1].GetTokenType() != TokenType::STAR ||
+        tokens[1].GetTokenContent() != "*") {
+        std::cout << "✗ Second token should be IDENTIFIER '*'" << std::endl;
+        return false;
+    }
+
+    std::cout << "✓ Test SELECT STAR test passed!" << std::endl;
     return true;
 }
 
@@ -55,14 +80,36 @@ bool TestBasicInsert() {
 
     PrintTokens(tokens);
 
-    // Verify we got the right tokens
+    if (tokens.size() != 15) {
+        std::cout << "✗ Expected 5 tokens, got " << tokens.size() << std::endl;
+        return false;
+    }
+
+    if (tokens[0].GetTokenType() != TokenType::INSERT) {
+        std::cout << "✗ First token should be INSERT" << std::endl;
+        return false;
+    }
+
+    if (tokens[1].GetTokenType() != TokenType::INTO) {
+        std::cout << "✗ Second token should be INTO" << std::endl;
+        return false;
+    }
+
+    if (tokens[2].GetTokenType() != TokenType::IDENTIFIER) {
+        std::cout << "✗ Second token should be IDENTIFIER" << std::endl;
+        return false;
+    }
+
+    std::cout << "✓ Test Basic INSERT passed!" << std::endl;
+    return true;
 }
 
 int main() {
     std::cout << "=== Lexer Test Suite ===" << std::endl;
 
     if (!TestBasicSelect()) return 1;
-    // Add more tests here...
+    if (!TestSelectStar()) return 1;
+    if (!TestBasicInsert()) return 1;
 
     std::cout << "\n=== All Tests Passed! ===" << std::endl;
     return 0;

@@ -18,6 +18,7 @@ endif()
 # Include directories
 include_directories(${PROJECT_SOURCE_DIR}/src/include)
 include_directories(${PROJECT_SOURCE_DIR}/src/storage)
+include_directories(${PROJECT_SOURCE_DIR}/src/parser)
 
 # Storage library (disk_manager and future storage classes)
 add_library(storage
@@ -30,6 +31,10 @@ add_library(storage
     src/storage/index/b_plus_tree_page.cpp
     src/storage/index/b_plus_tree_leaf_page.cpp
     src/storage/index/b_plus_tree_internal_page.cpp
+)
+
+add_library(parser
+    src/parser/lexer.cpp
 )
 
 # Test executable
@@ -70,6 +75,11 @@ add_executable(test_query_execution
     tests/test_query_execution.cpp
     )
 target_link_libraries(test_query_execution storage)
+
+add_executable(test_lexer
+    tests/test_lexer.cpp
+    )
+target_link_libraries(test_lexer parser)
 
 # Optional: Main executable (when you create it later)
 # add_executable(db_engine, src/main.cpp)

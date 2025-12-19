@@ -47,63 +47,63 @@ build cmake_object_order_depends_target_storage: phony || CMakeFiles/storage.dir
 build CMakeFiles/storage.dir/src/storage/disk/disk_manager.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/disk/disk_manager.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/disk/disk_manager.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/disk
 
 build CMakeFiles/storage.dir/src/storage/page/page.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/page/page.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/page/page.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/page
 
 build CMakeFiles/storage.dir/src/storage/buffer/lru_replacer.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/buffer/lru_replacer.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/buffer/lru_replacer.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/buffer
 
 build CMakeFiles/storage.dir/src/storage/buffer/buffer_pool_manager.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/buffer/buffer_pool_manager.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/buffer/buffer_pool_manager.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/buffer
 
 build CMakeFiles/storage.dir/src/storage/table/table_heap.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/table/table_heap.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/table/table_heap.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/table
 
 build CMakeFiles/storage.dir/src/storage/index/b_plus_tree.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/index/b_plus_tree.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/index/b_plus_tree.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/index
 
 build CMakeFiles/storage.dir/src/storage/index/b_plus_tree_page.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/index/b_plus_tree_page.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/index/b_plus_tree_page.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/index
 
 build CMakeFiles/storage.dir/src/storage/index/b_plus_tree_leaf_page.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/index/b_plus_tree_leaf_page.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/index/b_plus_tree_leaf_page.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/index
 
 build CMakeFiles/storage.dir/src/storage/index/b_plus_tree_internal_page.cpp.o: CXX_COMPILER__storage_unscanned_ /home/solshortland/projects/db-engine/src/storage/index/b_plus_tree_internal_page.cpp || cmake_object_order_depends_target_storage
   DEP_FILE = CMakeFiles/storage.dir/src/storage/index/b_plus_tree_internal_page.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/storage.dir
   OBJECT_FILE_DIR = CMakeFiles/storage.dir/src/storage/index
 
@@ -123,6 +123,37 @@ build libstorage.a: CXX_STATIC_LIBRARY_LINKER__storage_ CMakeFiles/storage.dir/s
   TARGET_PDB = storage.a.dbg
 
 # =============================================================================
+# Object build statements for STATIC_LIBRARY target parser
+
+
+#############################################
+# Order-only phony target for parser
+
+build cmake_object_order_depends_target_parser: phony || CMakeFiles/parser.dir
+
+build CMakeFiles/parser.dir/src/parser/lexer.cpp.o: CXX_COMPILER__parser_unscanned_ /home/solshortland/projects/db-engine/src/parser/lexer.cpp || cmake_object_order_depends_target_parser
+  DEP_FILE = CMakeFiles/parser.dir/src/parser/lexer.cpp.o.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
+  OBJECT_DIR = CMakeFiles/parser.dir
+  OBJECT_FILE_DIR = CMakeFiles/parser.dir/src/parser
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target parser
+
+
+#############################################
+# Link the static library libparser.a
+
+build libparser.a: CXX_STATIC_LIBRARY_LINKER__parser_ CMakeFiles/parser.dir/src/parser/lexer.cpp.o
+  OBJECT_DIR = CMakeFiles/parser.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libparser.a
+  TARGET_PDB = parser.a.dbg
+
+# =============================================================================
 # Object build statements for EXECUTABLE target test_disk_manager
 
 
@@ -134,7 +165,7 @@ build cmake_object_order_depends_target_test_disk_manager: phony || cmake_object
 build CMakeFiles/test_disk_manager.dir/tests/test_disk_manager.cpp.o: CXX_COMPILER__test_disk_manager_unscanned_ /home/solshortland/projects/db-engine/tests/test_disk_manager.cpp || cmake_object_order_depends_target_test_disk_manager
   DEP_FILE = CMakeFiles/test_disk_manager.dir/tests/test_disk_manager.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/test_disk_manager.dir
   OBJECT_FILE_DIR = CMakeFiles/test_disk_manager.dir/tests
 
@@ -166,7 +197,7 @@ build cmake_object_order_depends_target_test_page: phony || cmake_object_order_d
 build CMakeFiles/test_page.dir/tests/test_page.cpp.o: CXX_COMPILER__test_page_unscanned_ /home/solshortland/projects/db-engine/tests/test_page.cpp || cmake_object_order_depends_target_test_page
   DEP_FILE = CMakeFiles/test_page.dir/tests/test_page.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/test_page.dir
   OBJECT_FILE_DIR = CMakeFiles/test_page.dir/tests
 
@@ -198,7 +229,7 @@ build cmake_object_order_depends_target_test_lru_replacer: phony || cmake_object
 build CMakeFiles/test_lru_replacer.dir/tests/test_lru_replacer.cpp.o: CXX_COMPILER__test_lru_replacer_unscanned_ /home/solshortland/projects/db-engine/tests/test_lru_replacer.cpp || cmake_object_order_depends_target_test_lru_replacer
   DEP_FILE = CMakeFiles/test_lru_replacer.dir/tests/test_lru_replacer.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/test_lru_replacer.dir
   OBJECT_FILE_DIR = CMakeFiles/test_lru_replacer.dir/tests
 
@@ -230,7 +261,7 @@ build cmake_object_order_depends_target_test_buffer_pool_manager: phony || cmake
 build CMakeFiles/test_buffer_pool_manager.dir/tests/test_buffer_pool_manager.cpp.o: CXX_COMPILER__test_buffer_pool_manager_unscanned_ /home/solshortland/projects/db-engine/tests/test_buffer_pool_manager.cpp || cmake_object_order_depends_target_test_buffer_pool_manager
   DEP_FILE = CMakeFiles/test_buffer_pool_manager.dir/tests/test_buffer_pool_manager.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/test_buffer_pool_manager.dir
   OBJECT_FILE_DIR = CMakeFiles/test_buffer_pool_manager.dir/tests
 
@@ -262,7 +293,7 @@ build cmake_object_order_depends_target_test_table_heap: phony || cmake_object_o
 build CMakeFiles/test_table_heap.dir/tests/test_table_heap.cpp.o: CXX_COMPILER__test_table_heap_unscanned_ /home/solshortland/projects/db-engine/tests/test_table_heap.cpp || cmake_object_order_depends_target_test_table_heap
   DEP_FILE = CMakeFiles/test_table_heap.dir/tests/test_table_heap.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/test_table_heap.dir
   OBJECT_FILE_DIR = CMakeFiles/test_table_heap.dir/tests
 
@@ -294,7 +325,7 @@ build cmake_object_order_depends_target_test_b_plus_tree: phony || cmake_object_
 build CMakeFiles/test_b_plus_tree.dir/tests/test_b_plus_tree.cpp.o: CXX_COMPILER__test_b_plus_tree_unscanned_ /home/solshortland/projects/db-engine/tests/test_b_plus_tree.cpp || cmake_object_order_depends_target_test_b_plus_tree
   DEP_FILE = CMakeFiles/test_b_plus_tree.dir/tests/test_b_plus_tree.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/test_b_plus_tree.dir
   OBJECT_FILE_DIR = CMakeFiles/test_b_plus_tree.dir/tests
 
@@ -326,7 +357,7 @@ build cmake_object_order_depends_target_test_query_execution: phony || cmake_obj
 build CMakeFiles/test_query_execution.dir/tests/test_query_execution.cpp.o: CXX_COMPILER__test_query_execution_unscanned_ /home/solshortland/projects/db-engine/tests/test_query_execution.cpp || cmake_object_order_depends_target_test_query_execution
   DEP_FILE = CMakeFiles/test_query_execution.dir/tests/test_query_execution.cpp.o.d
   FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
-  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
   OBJECT_DIR = CMakeFiles/test_query_execution.dir
   OBJECT_FILE_DIR = CMakeFiles/test_query_execution.dir/tests
 
@@ -345,6 +376,38 @@ build test_query_execution: CXX_EXECUTABLE_LINKER__test_query_execution_ CMakeFi
   PRE_LINK = :
   TARGET_FILE = test_query_execution
   TARGET_PDB = test_query_execution.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_lexer
+
+
+#############################################
+# Order-only phony target for test_lexer
+
+build cmake_object_order_depends_target_test_lexer: phony || cmake_object_order_depends_target_parser
+
+build CMakeFiles/test_lexer.dir/tests/test_lexer.cpp.o: CXX_COMPILER__test_lexer_unscanned_ /home/solshortland/projects/db-engine/tests/test_lexer.cpp || cmake_object_order_depends_target_test_lexer
+  DEP_FILE = CMakeFiles/test_lexer.dir/tests/test_lexer.cpp.o.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
+  OBJECT_DIR = CMakeFiles/test_lexer.dir
+  OBJECT_FILE_DIR = CMakeFiles/test_lexer.dir/tests
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_lexer
+
+
+#############################################
+# Link the executable test_lexer
+
+build test_lexer: CXX_EXECUTABLE_LINKER__test_lexer_ CMakeFiles/test_lexer.dir/tests/test_lexer.cpp.o | libparser.a || libparser.a
+  LINK_LIBRARIES = libparser.a
+  OBJECT_DIR = CMakeFiles/test_lexer.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = test_lexer
+  TARGET_PDB = test_lexer.dbg
 
 
 #############################################
@@ -372,6 +435,8 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
+build parser: phony libparser.a
+
 build storage: phony libstorage.a
 
 # =============================================================================
@@ -382,7 +447,7 @@ build storage: phony libstorage.a
 #############################################
 # Folder: /home/solshortland/projects/db-engine/build
 
-build all: phony libstorage.a test_disk_manager test_page test_lru_replacer test_buffer_pool_manager test_table_heap test_b_plus_tree test_query_execution
+build all: phony libstorage.a libparser.a test_disk_manager test_page test_lru_replacer test_buffer_pool_manager test_table_heap test_b_plus_tree test_query_execution test_lexer
 
 # =============================================================================
 # Built-in targets

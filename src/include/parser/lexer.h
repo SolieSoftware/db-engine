@@ -13,8 +13,9 @@ namespace dbengine {
 
         private:
             void SkipWhiteSpace();
-            Token ScanIdentifierOrKeyWord();
+            Token ScanIdentifierOrKeyword();
             Token ScanNumber();
+            Token ScanString();
             Token ScanOperator();
 
             char Peek() const;

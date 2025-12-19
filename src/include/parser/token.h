@@ -5,7 +5,7 @@ namespace dbengine {
     enum class TokenType {
         // Keywords
         SELECT, FROM , WHERE, INSERT, INTO, VALUES, 
-        AND, OR
+        AND, OR,
 
         // Identifiers and Literals
         IDENTIFIER, NUMBER, STRING, 

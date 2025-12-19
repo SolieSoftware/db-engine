@@ -155,4 +155,56 @@ namespace dbengine {
               return Token(TokenType::INVALID, std::string(1, current));
       }
     }
+
+    std::vector<Token> Lexer::Tokenize() {
+        std::vector<Token> tokens;
+
+        while (!IsAtEnd()) {
+            SkipWhiteSpace();
+
+            if (IsAtEnd()) break;
+
+            char c = Peek();
+
+            if (IsDigit(c)) {
+                tokens.push_back(ScanNumber());
+            }
+            else if (IsAlpha(c)) {
+                tokens.push_back(ScanIdentifierOrKeyword());
+            }
+            else if (c == '\'') {
+                tokens.push_back(ScanString());
+            }
+            else if (c == '=' || c == '!' || c == '<' || c == '>') {
+                tokens.push_back(ScanOperator());
+            }
+            else if (c == ',') {
+                tokens.push_back(Token(TokenType::COMMA, ","));
+                Advance();
+            }
+            else if (c == '(') {
+                tokens.push_back(Token(TokenType::LPAREN, "("));
+                Advance();
+            }
+            else if (c == ')') {
+                tokens.push_back(Token(TokenType::RPAREN, ")"));
+                Advance();
+            }
+            else if (c == ';') {
+                tokens.push_back(Token(TokenType::SEMICOLON, ";"));
+                Advance();
+            }
+            else if (c == '*') {
+                tokens.push_back(Token(TokenType::STAR, "*"));
+                Advance();
+            }
+            else {
+                tokens.push_back(Token(TokenType::INVALID, std::string(1, c)));
+                Advance();
+            }
+        }
+
+        tokens.push_back(Token(TokenType::END_OF_FILE, ""));
+        return tokens;
+    }
 }

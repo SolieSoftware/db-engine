@@ -4,7 +4,8 @@
 namespace dbengine {
     enum class TokenType {
         // Keywords
-        SELECT, FROM , WHERE, INSERT, INTO, VALUES,
+        SELECT, FROM , WHERE, INSERT, INTO, VALUES, 
+        AND, OR
 
         // Identifiers and Literals
         IDENTIFIER, NUMBER, STRING, 
@@ -21,13 +22,13 @@ namespace dbengine {
 
     class Token {
         public:
-        Token(TokenType type, const std::string &lexeme) : type_(token_type), lexeme(token_content) {};
+        Token(TokenType type, const std::string &lexeme) : type_(type), lexeme_(lexeme) {};
 
         TokenType GetTokenType() const {return type_; }
         std::string GetTokenContent() const {return lexeme_; }
 
         private:
-        TokenType token_type_;
+        TokenType type_;
         std::string lexeme_;
     };
 }

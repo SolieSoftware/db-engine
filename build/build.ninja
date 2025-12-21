@@ -138,6 +138,13 @@ build CMakeFiles/parser.dir/src/parser/lexer.cpp.o: CXX_COMPILER__parser_unscann
   OBJECT_DIR = CMakeFiles/parser.dir
   OBJECT_FILE_DIR = CMakeFiles/parser.dir/src/parser
 
+build CMakeFiles/parser.dir/src/parser/parser.cpp.o: CXX_COMPILER__parser_unscanned_ /home/solshortland/projects/db-engine/src/parser/parser.cpp || cmake_object_order_depends_target_parser
+  DEP_FILE = CMakeFiles/parser.dir/src/parser/parser.cpp.o.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
+  OBJECT_DIR = CMakeFiles/parser.dir
+  OBJECT_FILE_DIR = CMakeFiles/parser.dir/src/parser
+
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target parser
@@ -146,7 +153,7 @@ build CMakeFiles/parser.dir/src/parser/lexer.cpp.o: CXX_COMPILER__parser_unscann
 #############################################
 # Link the static library libparser.a
 
-build libparser.a: CXX_STATIC_LIBRARY_LINKER__parser_ CMakeFiles/parser.dir/src/parser/lexer.cpp.o
+build libparser.a: CXX_STATIC_LIBRARY_LINKER__parser_ CMakeFiles/parser.dir/src/parser/lexer.cpp.o CMakeFiles/parser.dir/src/parser/parser.cpp.o
   OBJECT_DIR = CMakeFiles/parser.dir
   POST_BUILD = :
   PRE_LINK = :

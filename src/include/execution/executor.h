@@ -7,6 +7,7 @@ namespace dbengine {
 
 class Executor {
 public:
+    // Prevents implicit type conversion. 
     explicit Executor(ExecutionContext *context) : context_(context) {}
 
     virtual ~Executor() = default;

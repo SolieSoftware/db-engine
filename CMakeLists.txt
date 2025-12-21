@@ -35,6 +35,7 @@ add_library(storage
 
 add_library(parser
     src/parser/lexer.cpp
+    src/parser/parser.cpp
 )
 
 # Test executable

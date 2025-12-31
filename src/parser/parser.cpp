@@ -66,10 +66,10 @@
       Expect(TokenType::FROM, "Expected FROM keyword");                                                                                                
                                                                                                                                                                                                                                                                          
       Token table_token = Expect(TokenType::IDENTIFIER, "Expected table name");                                                                        
-      auto table_expr = std::make_uniqe<ColumnExpression>(
+      auto table_expr = std::make_unique<ColumnExpression>(
         table_token.GetTokenContent(),
-        GetCurrentLocation(0)
-      )                                                                                        
+        GetCurrentLocation()
+      );                                                                                        
                                                                                                                                                                                                                                                                         
       std::unique_ptr<Expression> where_clause = nullptr;                                                                                              
       if (Match(TokenType::WHERE)) {                                                                                                                   
@@ -101,10 +101,11 @@
     while (Match(TokenType::COMMA)) {
         select_list.push_back(ParsePrimary());
     }
-    
+
     return select_list;
-                                                                                                                                                       
-  std::unique_ptr<Expression> Parser::ParseExpression() {      
+}
+
+std::unique_ptr<Expression> Parser::ParseExpression() {      
     return ParseOrExpression();                                                                                                                                                                       
   }
   
@@ -121,7 +122,7 @@
             op,
             std::move(right),
             loc
-        )
+        );
     }
     return left;
   }
@@ -134,10 +135,10 @@
         TokenType op = TokenType::AND;
         auto right = ParseComparison();
 
-        left= std::make_unique<BinaryExpression>(
+        left = std::make_unique<BinaryExpression>(
             std::move(left),
             op,
-            std:move(right),
+            std::move(right),
             loc
         );
     }
@@ -149,13 +150,13 @@
 
     if (Match(TokenType::EQUALS) || Match(TokenType::NOT_EQUALS) ||
         Match(TokenType::LESS_THAN) || Match(TokenType::GREATER_THAN) ||
-        Match(TokenType::LESS_EQUAL) || Match(TokenType::GREATER_EQUALS)) {
+        Match(TokenType::LESS_EQUAL) || Match(TokenType::GREATER_EQUAL)) {
             SourceLocation loc = GetCurrentLocation();
             TokenType op = Previous().GetTokenType();
             auto right = ParsePrimary();
 
             return std::make_unique<BinaryExpression>(
-                std::move(lefft),
+                std::move(left),
                 op,
                 std::move(right),
                 loc
@@ -188,6 +189,15 @@
         );
     }
 
+    // Column reference (identifier)
+    if (Check(TokenType::IDENTIFIER)) {
+        Token id_token = Advance();
+        return std::make_unique<ColumnExpression>(
+            id_token.GetTokenContent(),
+            loc
+        );
+    }
+
     // Parenthesized expression
     if (Match(TokenType::LPAREN)) {
         auto expr = ParseExpression();
@@ -196,8 +206,59 @@
     }
 
     throw ParseException("Expected expression", Peek());
-  }
-                                                                                                                                                       
-  }  
-}                                                                                                                         
+}
+
+std::unique_ptr<InsertStatement> Parser::ParseInsertStatement() {
+    SourceLocation start_location = GetCurrentLocation();
+
+    Expect(TokenType::INSERT, "Expected INSERT keyword");
+    Expect(TokenType::INTO, "Expected INTO keyword");
+
+    Token table_token = Expect(TokenType::IDENTIFIER, "Expected table name");
+    auto table_expr = std::make_unique<ColumnExpression>(
+        table_token.GetTokenContent(),
+        GetCurrentLocation()
+    );
+
+    // Parse column list: (col1, col2, col3)
+    std::vector<std::string> column_names;
+    Expect(TokenType::LPAREN, "Expected '(' after table name");
+
+    if (!Check(TokenType::RPAREN)) {
+        Token col = Expect(TokenType::IDENTIFIER, "Expected column name");
+        column_names.push_back(col.GetTokenContent());
+
+        while (Match(TokenType::COMMA)) {
+            Token col = Expect(TokenType::IDENTIFIER, "Expected column name");
+            column_names.push_back(col.GetTokenContent());
+        }
+    }
+
+    Expect(TokenType::RPAREN, "Expected ')' after column list");
+
+    // Parse VALUES keyword and value list
+    Expect(TokenType::VALUES, "Expected VALUES keyword");
+    Expect(TokenType::LPAREN, "Expected '(' after VALUES");
+
+    std::vector<std::unique_ptr<Expression>> values;
+    if (!Check(TokenType::RPAREN)) {
+        values.push_back(ParsePrimary());
+
+        while (Match(TokenType::COMMA)) {
+            values.push_back(ParsePrimary());
+        }
+    }
+
+    Expect(TokenType::RPAREN, "Expected ')' after value list");
+    Match(TokenType::SEMICOLON);  // Optional semicolon
+
+    return std::make_unique<InsertStatement>(
+        std::move(table_expr),
+        std::move(column_names),
+        std::move(values),
+        start_location
+    );
+}
+
+}  // namespace dbengine                                                                                                                         
                       

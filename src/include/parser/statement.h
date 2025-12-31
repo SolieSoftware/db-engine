@@ -51,7 +51,40 @@ namespace dbengine {
             void Accept(ASTVisitor* visitor) override {
                 visitor->Visit(this);
             }
+    };
 
+    class InsertStatement : public Statement {
+        private:
+            std::unique_ptr<Expression> table_name_;
+            std::vector<std::string> column_names_;
+            std::vector<std::unique_ptr<Expression>> values_;
+
+        public:
+            InsertStatement(
+                std::unique_ptr<Expression> table_name,
+                std::vector<std::string> column_names,
+                std::vector<std::unique_ptr<Expression>> values,
+                SourceLocation location
+            ) : Statement(NodeType::INSERT_STATEMENT, location),
+                table_name_(std::move(table_name)),
+                column_names_(std::move(column_names)),
+                values_(std::move(values)) {}
+
+            Expression* GetTableName() const {
+                return table_name_.get();
+            }
+
+            const std::vector<std::string>& GetColumnNames() const {
+                return column_names_;
+            }
+
+            std::vector<std::unique_ptr<Expression>>& GetValues() {
+                return values_;
+            }
+
+            void Accept(ASTVisitor* visitor) override {
+                visitor->Visit(this);
+            }
     };
 
 }

@@ -82,5 +82,15 @@ add_executable(test_lexer
     )
 target_link_libraries(test_lexer parser)
 
+add_executable(test_parser
+    tests/test_parser.cpp
+    )
+target_link_libraries(test_parser parser storage)
+
+add_executable(test_insert_and_prettyprint
+    tests/test_insert_and_prettyprint.cpp
+    )
+target_link_libraries(test_insert_and_prettyprint parser storage)
+
 # Optional: Main executable (when you create it later)
 # add_executable(db_engine, src/main.cpp)

@@ -1,13 +1,14 @@
- #pragma once
+#pragma once
 
-  #include "parser/token.h"
-  #include "parser/statement.h"
-  #include "parser/expression.h"
-  #include "parser/ast_node.h"
+#include "parser/token.h"
+#include "parser/statement.h"
+#include "parser/expression.h"
+#include "parser/ast_node.h"
 
-  #include <vector>
-  #include <memory>
-  #include <string>
+#include <vector>
+#include <memory>
+#include <string>
+#include <stdexcept>
 
   namespace dbengine {
 
@@ -45,6 +46,7 @@
       explicit Parser(const std::vector<Token>& tokens);
 
       std::unique_ptr<SelectStatement> ParseSelectStatement();
+      std::unique_ptr<InsertStatement> ParseInsertStatement();
   };
 
   } 

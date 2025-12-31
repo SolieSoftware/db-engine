@@ -8,5 +8,7 @@
 /home/solshortland/projects/db-engine/build/CMakeFiles/test_b_plus_tree.dir
 /home/solshortland/projects/db-engine/build/CMakeFiles/test_query_execution.dir
 /home/solshortland/projects/db-engine/build/CMakeFiles/test_lexer.dir
+/home/solshortland/projects/db-engine/build/CMakeFiles/test_parser.dir
+/home/solshortland/projects/db-engine/build/CMakeFiles/test_insert_and_prettyprint.dir
 /home/solshortland/projects/db-engine/build/CMakeFiles/edit_cache.dir
 /home/solshortland/projects/db-engine/build/CMakeFiles/rebuild_cache.dir

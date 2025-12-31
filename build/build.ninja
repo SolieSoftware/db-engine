@@ -416,6 +416,70 @@ build test_lexer: CXX_EXECUTABLE_LINKER__test_lexer_ CMakeFiles/test_lexer.dir/t
   TARGET_FILE = test_lexer
   TARGET_PDB = test_lexer.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target test_parser
+
+
+#############################################
+# Order-only phony target for test_parser
+
+build cmake_object_order_depends_target_test_parser: phony || cmake_object_order_depends_target_parser cmake_object_order_depends_target_storage
+
+build CMakeFiles/test_parser.dir/tests/test_parser.cpp.o: CXX_COMPILER__test_parser_unscanned_ /home/solshortland/projects/db-engine/tests/test_parser.cpp || cmake_object_order_depends_target_test_parser
+  DEP_FILE = CMakeFiles/test_parser.dir/tests/test_parser.cpp.o.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
+  OBJECT_DIR = CMakeFiles/test_parser.dir
+  OBJECT_FILE_DIR = CMakeFiles/test_parser.dir/tests
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_parser
+
+
+#############################################
+# Link the executable test_parser
+
+build test_parser: CXX_EXECUTABLE_LINKER__test_parser_ CMakeFiles/test_parser.dir/tests/test_parser.cpp.o | libparser.a libstorage.a || libparser.a libstorage.a
+  LINK_LIBRARIES = libparser.a  libstorage.a
+  OBJECT_DIR = CMakeFiles/test_parser.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = test_parser
+  TARGET_PDB = test_parser.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_insert_and_prettyprint
+
+
+#############################################
+# Order-only phony target for test_insert_and_prettyprint
+
+build cmake_object_order_depends_target_test_insert_and_prettyprint: phony || cmake_object_order_depends_target_parser cmake_object_order_depends_target_storage
+
+build CMakeFiles/test_insert_and_prettyprint.dir/tests/test_insert_and_prettyprint.cpp.o: CXX_COMPILER__test_insert_and_prettyprint_unscanned_ /home/solshortland/projects/db-engine/tests/test_insert_and_prettyprint.cpp || cmake_object_order_depends_target_test_insert_and_prettyprint
+  DEP_FILE = CMakeFiles/test_insert_and_prettyprint.dir/tests/test_insert_and_prettyprint.cpp.o.d
+  FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic
+  INCLUDES = -I/home/solshortland/projects/db-engine/src/include -I/home/solshortland/projects/db-engine/src/storage -I/home/solshortland/projects/db-engine/src/parser
+  OBJECT_DIR = CMakeFiles/test_insert_and_prettyprint.dir
+  OBJECT_FILE_DIR = CMakeFiles/test_insert_and_prettyprint.dir/tests
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_insert_and_prettyprint
+
+
+#############################################
+# Link the executable test_insert_and_prettyprint
+
+build test_insert_and_prettyprint: CXX_EXECUTABLE_LINKER__test_insert_and_prettyprint_ CMakeFiles/test_insert_and_prettyprint.dir/tests/test_insert_and_prettyprint.cpp.o | libparser.a libstorage.a || libparser.a libstorage.a
+  LINK_LIBRARIES = libparser.a  libstorage.a
+  OBJECT_DIR = CMakeFiles/test_insert_and_prettyprint.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = test_insert_and_prettyprint
+  TARGET_PDB = test_insert_and_prettyprint.dbg
+
 
 #############################################
 # Utility command for edit_cache
@@ -454,7 +518,7 @@ build storage: phony libstorage.a
 #############################################
 # Folder: /home/solshortland/projects/db-engine/build
 
-build all: phony libstorage.a libparser.a test_disk_manager test_page test_lru_replacer test_buffer_pool_manager test_table_heap test_b_plus_tree test_query_execution test_lexer
+build all: phony libstorage.a libparser.a test_disk_manager test_page test_lru_replacer test_buffer_pool_manager test_table_heap test_b_plus_tree test_query_execution test_lexer test_parser test_insert_and_prettyprint
 
 # =============================================================================
 # Built-in targets

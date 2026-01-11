@@ -4,10 +4,6 @@
 
 namespace dbengine {
 
-    /**
-    * Initialize an empty page 
-    */
-
     void Page::Init(int32_t page_id) {
         // Zero out all the page data
         memset(data_, 0, PAGE_SIZE);
@@ -16,21 +12,13 @@ namespace dbengine {
         PageHeader *header = GetHeader();
         header->num_slots = 0;
         header->num_records = 0;
-        header->free_space_pointer = PAGE_SIZE; // Start at END
+        header->free_space_pointer = PAGE_SIZE;
         header->page_id = page_id;
     }
-
-    /** 
-    * Get page ID 
-    */
-
+    
     int32_t Page::GetPageId() const {
         return GetHeader()->page_id;
     }
-
-    /**
-    * Get free space available in the page
-     */
 
      uint32_t Page::GetFreeSpace() const {
         const PageHeader *header = GetHeader();
@@ -44,12 +32,8 @@ namespace dbengine {
             return records_start - slot_array_end;
         }
 
-        return 0; // No free space (shouldn't happend in normal operation)
+        return 0;
      }
-
-     /** 
-      * Insert a record into the page
-      */
 
       bool Page::InsertRecord(const char *data, uint32_t size, RID &rid) {
             PageHeader *header = GetHeader();
@@ -59,9 +43,9 @@ namespace dbengine {
 
             uint32_t space_needed = size;
 
-            // Need space for nes slot AND the record
+            // Need space for new slot AND the record
             if (header->free_space_pointer - space_needed < slot_array_end) {
-                return false; // Not enough space
+                return false;
             }
 
             // Find an empty slot (deleted record) to reuse, or create a new one
@@ -102,9 +86,6 @@ namespace dbengine {
             return true;
       }
       
-      /*
-      * Get a record from the page
-      */
       bool Page::GetRecord(const RID &rid, char *data) {
         const PageHeader *header = GetHeader();
 

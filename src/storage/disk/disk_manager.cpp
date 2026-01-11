@@ -5,10 +5,8 @@
 
 namespace dbengine {
 DiskManager::DiskManager(const std::string &db_file): file_name_(db_file), num_pages_(0) {
-    // TODO: Initialize the file name and number of pages.
     std::ifstream check_file(file_name_);
     if (!check_file.good()) {
-        // File doesn't exists, create an empty one
         std::ofstream create_file(file_name_, std::ios::binary);
         if (!create_file.is_open()) {
             throw std::runtime_error("Failed to create database file: " + file_name_);
@@ -19,7 +17,6 @@ DiskManager::DiskManager(const std::string &db_file): file_name_(db_file), num_p
 
     // Try to open the file for read and write in binary mode.
     db_io_.open(file_name_, std::ios::in | std::ios::out | std::ios::binary);
-    // If the file cannot be opened, throw an error.
     if (!db_io_.is_open()) {
         throw std::runtime_error("Failed to open database file: " + file_name_);
     }
@@ -43,7 +40,7 @@ void DiskManager::WritePage(page_id_t page_id, const char *page_data) {
     // Using uint64_t for offset to avoid potential large page IDs causing overflows.
     uint64_t offset = static_cast<uint64_t>(page_id) * PAGE_SIZE;
 
-    // Seek to the correct position in the file.
+    // Seek put position.
     db_io_.seekp(offset, std::ios::beg);
 
     // Write the page data to the file.
@@ -73,12 +70,28 @@ void DiskManager::WritePage(page_id_t page_id, const char *page_data) {
  }
 
  page_id_t DiskManager::AllocatePage() {
+    // First, check if we have any deallocated pages to reuse
+    if (!free_list_.empty()) {
+        page_id_t reused_page_id = free_list_.back();
+        free_list_.pop_back();
+        return reused_page_id;
+    }
+
+    // No free pages available, allocate a new page at the end
     return num_pages_++;
  }
 
  void DiskManager::DeallocatePage(page_id_t page_id) {
-    // Simple implementation: do nothing
-    (void) page_id; // Suppres unused parameter warning
-    
+    // Validate the page_id
+    if (page_id < 0 || page_id >= num_pages_) {
+        // Invalid page_id, ignore the request
+        return;
+    }
+
+    // Add the page to the free list for future reuse
+    free_list_.push_back(page_id);
+
+    // Note: We don't actually zero out the page data on disk
+    // The page will be overwritten when it's reused by AllocatePage
  }
 }
